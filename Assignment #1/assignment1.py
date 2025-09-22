@@ -19,7 +19,7 @@ def pathfinding(filepath):
   #get all the labels (X, O, 1-9, S, G)
   goals = []
   walls = set()
-  treasures = {}
+  treasures = {} #dictionary 
   rows = len(grid)
   cols = len(grid[0]) if rows > 0 else 0
 
@@ -34,6 +34,9 @@ def pathfinding(filepath):
         walls.add((i, j))
       elif grid[i][j].isdigit():
         treasures[(i, j)] = int(grid[i][j])
+
+  #keep track of which treasures we have been on already 
+  
 
   # optimal_path is a list of coordinate of squares visited (in order)
   # optimal_path_cost is the cost of the optimal path
