@@ -21,7 +21,7 @@ def pathfinding(filepath):
   walls = set()
   treasures = {}
   rows = len(grid)
-  cols = len(grid[0]) 
+  cols = len(grid[0]) if rows > 0 else 0
 
   #loop through each coordinate of the grid
   for i in range(rows):
