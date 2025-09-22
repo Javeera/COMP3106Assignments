@@ -3,6 +3,12 @@
 # The pathfinding function must implement A* search to find the goal state
 def pathfinding(filepath):
   # filepath is the path to a CSV file containing a grid 
+  grid = []
+  with open(filepath, newln='') as file:
+    reader = csv.reader(file)
+    for row in reader:
+      grid.append(row)
+  return grid
 
   # optimal_path is a list of coordinate of squares visited (in order)
   # optimal_path_cost is the cost of the optimal path
