@@ -8,3 +8,5 @@ def pathfinding(filepath):
   # optimal_path_cost is the cost of the optimal path
   # num_states_explored is the number of states explored during A* search
   return optimal_path, optimal_path_cost, num_states_explored
+
+  #comment
