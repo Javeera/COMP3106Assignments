@@ -1,4 +1,10 @@
+# Gurleen 
+# Fatema 
+# Javeera Faizi 101191910
 # Name this file to assignment1.py when you submit
+
+import csv
+import heapq  # For priority queue implementation
 
 # The pathfinding function must implement A* search to find the goal state
 def pathfinding(filepath):
