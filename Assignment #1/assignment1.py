@@ -14,7 +14,7 @@ def pathfinding(filepath):
     reader = csv.reader(file)
     for row in reader:
       grid.append(row)
-  return grid
+  # grid contains all the labels from the csv file (X, O, 1-9, S, G)
 
   # optimal_path is a list of coordinate of squares visited (in order)
   # optimal_path_cost is the cost of the optimal path
