@@ -84,7 +84,7 @@ def pathfinding(filepath):
         continue
 
       #calculate new g, h, f values
-      new_t = t_sum + treasures.get((neighbour_row, neighbour_col), 0)
+      new_t = t_sum + treasures.get((neighbour_row, neighbour_col), 0) #when we get it, add it to explored, check that its done, reset for each path
       new_g = g + 1
       new_h = min(heuristic((neighbour_row, neighbour_col), goal) for goal in goals)
       new_f = new_g + new_h
@@ -102,18 +102,20 @@ result = pathfinding("Assignment #1\Examples\Examples\Example0\grid.txt")
 print(result)
 
 # right now code is traversing over the same treasure multiple times 
-# general -   how detailed should assignment answers be?           
+# general -   how detailed should assignment answers be?    overview of our understanding.        
 
-#             is our code formatting correctly? do the functions we have make sense?   
+#             is our code formatting correctly? do the functions we have make sense?  >>>yes 
 #        
-#             how to submit - one person or multiple?        
+#             how to submit - one person or multiple? >>>one person       
 #   
-#             is heapq.heappush allowed? (it's in standard python library)    
+#             is heapq.heappush allowed? (it's in standard python library)    >>>we are good
 #    
 #             how do you want us to store the fact that a trewasure has been explored? 
 #             from our research we could use frozenset but not sure if that's allowed or a bitmap. 
-#             We are more familiar with bitmaps 
+#             We are more familiar with bitmaps . 
 #             but we would honestly prefer to just store this info in an array or something.   
+#             >>>#when we get it, add it to explored, check that its done, reset for each path
+#             >>>dont use bitmap  or frozenset, just store the fact that the treasure has been picked up.
 
 # #S,0,3
 # 0,0,0
