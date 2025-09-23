@@ -83,11 +83,13 @@ def pathfinding(filepath):
       if (neighbour_row, neighbour_col) in walls: #if wall or obstacle
         continue
 
+      #calculate new g, h, f values
       new_t = t_sum + treasures.get((neighbour_row, neighbour_col), 0)
       new_g = g + 1
       new_h = min(heuristic((neighbour_row, neighbour_col), goal) for goal in goals)
       new_f = new_g + new_h
 
+      #getting minimum f value
       heapq.heappush(frontier, (new_f, new_g, (neighbour_row, neighbour_col), new_t, path + [(neighbour_row, neighbour_col)]))
 
   # optimal_path is a list of coordinate of squares visited (in order)
