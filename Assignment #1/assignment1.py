@@ -102,7 +102,22 @@ result = pathfinding("Assignment #1\Examples\Examples\Example0\grid.txt")
 print(result)
 
 # right now code is traversing over the same treasure multiple times 
-# general -   how detailed should assignment answers be 
-#             is code formatting correct
-#             how to submit - one person or multiple
-#             is heapq.heappush allowed (it's in standard python library)
+# general -   how detailed should assignment answers be?           
+
+#             is our code formatting correctly? do the functions we have make sense?   
+#        
+#             how to submit - one person or multiple?        
+#   
+#             is heapq.heappush allowed? (it's in standard python library)    
+#    
+#             how do you want us to store the fact that a trewasure has been explored? 
+#             from our research we could use frozenset but not sure if that's allowed or a bitmap. 
+#             We are more familiar with bitmaps 
+#             but we would honestly prefer to just store this info in an array or something.   
+
+# #S,0,3
+# 0,0,0
+# 2,X,G
+# Correct output: [(0, 0), (1, 0), (2, 0), (1, 0), (1, 1), (1, 2), (0, 2), (1, 2), (2, 2)] 8 24
+# Our output: [(0, 0), (0, 1), (0, 2), (0, 1), (0, 2), (1, 2), (2, 2)] 6 32
+
