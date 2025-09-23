@@ -6,20 +6,19 @@
 import csv
 import heapq  # For priority queue implementation
 
-# The pathfinding function must implement A* search to find the goal state
-def pathfinding(filepath):
+def grid_traversal(filepath):
   # filepath is the path to a CSV file containing a grid 
   grid = []
   with open(filepath, newln='') as file:
     reader = csv.reader(file)
     for row in reader:
       grid.append(row)
-  # grid contains all the labels from the csv file (X, O, 1-9, S, G)
+  # grid contains all the rows with labels from the csv file (X, O, 1-9, S, G)
 
   #get all the labels (X, O, 1-9, S, G)
-  goals = []
-  walls = set()
-  treasures = {} #dictionary 
+  goals = [] #location of goals
+  walls = set() #location of walls
+  treasures = {} #stores location & value
   rows = len(grid)
   cols = len(grid[0]) if rows > 0 else 0
 
@@ -34,6 +33,18 @@ def pathfinding(filepath):
         walls.add((i, j))
       elif grid[i][j].isdigit():
         treasures[(i, j)] = int(grid[i][j])
+
+  return grid, start, goals, walls, treasures, rows, cols
+
+
+def heuristic(a, b):
+    # Using Manhattan distance as heuristic
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+
+# The pathfinding function must implement A* search to find the goal state
+def pathfinding(filepath):
+  
 
   #keep track of which treasures we have been on already 
   
