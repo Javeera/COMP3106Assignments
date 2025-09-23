@@ -9,7 +9,7 @@ import heapq  # For priority queue implementation
 def grid_traversal(filepath):
   # filepath is the path to a CSV file containing a grid 
   grid = []
-  with open(filepath, newln='') as file:
+  with open(filepath, newline='') as file:
     reader = csv.reader(file)
     for row in reader:
       grid.append(row)
@@ -98,11 +98,14 @@ def pathfinding(filepath):
   return optimal_path, optimal_path_cost, num_states_explored
 
 
+result = pathfinding("Assignment #1\Examples\Examples\Example0\grid.txt")
+print(result)
 
-
-
-
-
+# right now code is traversing over the same treasure multiple times 
+# general -   how detailed should assignment answers be 
+#             is code formatting correct
+#             how to submit - one person or multiple
+#             is heapq.heappush allowed (it's in standard python library)
 
 
 
