@@ -70,7 +70,7 @@ def pathfinding(filepath):
       break #return
 
     #adding our node & treasure sum to the explored nodes.
-    state = (current, t_sum)
+    state = current
     if state in explored:
       continue
     explored.add(state)  
@@ -98,7 +98,7 @@ def pathfinding(filepath):
   return optimal_path, optimal_path_cost, num_states_explored
 
 
-result = pathfinding("Assignment #1\Examples\Examples\Example0\grid.txt")
+result = pathfinding("Examples\Examples\Example0\grid.txt")
 print(result)
 
 # right now code is traversing over the same treasure multiple times 
