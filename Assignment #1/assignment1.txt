@@ -29,6 +29,9 @@ Question 3
     Taking the minimum:
         h(n) = min_g Manhattan(n,g) <= 1 + min_g Manhattan(n',g) = 1+h(n')
     Therefore h is consistent
+    
+    > h(g) aswell
+    > show more steps for the math.
 
 Question 4
     Suggest a particular instance of this problem (i.e. grid) where A* search using your heuristic would find the optimal solution faster than uniform cost search.
