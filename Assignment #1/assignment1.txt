@@ -1,29 +1,40 @@
 Question 1
+    What type of agent have you implemented (simple reflex agent, model-based reflex agent, goal-based agent, or utility-based agent)?
+    
     We have implemented a goal based agent.
 
 Question 2
     A
-
+        Fully Observable
     B
-
+        Single Agent
     C
-
+        Deterministic
     D
-
+        Sequential
     E
-
+        Static
     F
-
+        Discrete
     G
-
+        Known
 
 Question 3
+    What heuristic did you use for A* search for this environment? Show that your heuristic is consistent.
+    
+    The heuristic we used is the Manhattan Heuristic which is commonly used for grids in which the agent can only move up, down, left or right.
 
 
 Question 4
+    Suggest a particular instance of this problem (i.e. grid) where A* search using your heuristic would find the optimal solution faster than uniform cost search.
 
+    
 
 Question 5
+    Suggest a particular instance of this problem (i.e. grid) where a greedy heuristic search using your heuristic would not find the optimal solution
+
 
 
 Question 6
+    Consider a modification of this problem where your agent need only pick up treasures with value totalling at least 1. Determine whether your heuristic is still consistent
+
