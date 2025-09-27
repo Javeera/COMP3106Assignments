@@ -1,9 +1,9 @@
 Question 1
-    We have implemented a simple reflex agent.
+    We have implemented a goal based agent.
 
 Question 2
     A
-        
+
     B
 
     C
