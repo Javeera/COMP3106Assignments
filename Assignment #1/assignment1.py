@@ -19,7 +19,8 @@ def grid_traversal(filepath):
   goals = [] #location of goals
   walls = set() #location of walls
   treasures = {} #stores location & value
-  treasures_state_explored = {} #store location & state
+  ### why is walls a set & goals a list
+
   rows = len(grid)
   cols = len(grid[0]) if rows > 0 else 0
 
@@ -32,7 +33,7 @@ def grid_traversal(filepath):
         goals.append((i, j))
       elif grid[i][j] == 'X':
         walls.add((i, j))
-      elif grid[i][j].isdigit():
+      elif grid[i][j].isdigit() and int(grid[i][j]) > 0:
         treasures[(i, j)] = int(grid[i][j])
         treasures_state_explored[(i, j)] = int(grid[i][j])
 
@@ -48,21 +49,32 @@ def heuristic(a, b):
 
 # The pathfinding function must implement A* search to find the goal state
 def pathfinding(filepath):
+  #### only one start node
 
-  start_node, goals, walls, treasures, treasures_state_explored, rows, cols = grid_traversal(filepath)
+  #### only one start node
+  grid, start_node, goals, walls, treasures, rows, cols = grid_traversal(filepath)
 
   # A* search algorithm
   frontier = []
   start_g = 0
   start_h = min(heuristic(start_node, goal) for goal in goals)
   start_f = start_g + start_h
-  heapq.heappush(frontier, (start_f, start_g, start_node, 0, [start_node]))  # adding start state to the fronteir
+  heapq.heappush(frontier, (start_f, start_g, start_node, 0, set(), [start_node]))  # (f, g, pos, treasure_sum, collected set of treasures, path)
 
-  explored = set()  # closed set of (pos, treasure_sum)
+  # best cost so far to reach a specific (node pos, collected_set of treasures) state.
+  # Key must be hashable: (pos, tuple(sorted(collected_set)))
+  gScore = { (start_node, ()): 0 } #gScore[state] stores the best cost we have found so far to reach that state.
+
+  #explored = set()  # closed set of (pos, treasure_sum)
   num_states_explored = 0
 
   while frontier:
-    f, g, current, t_sum, path = heapq.heappop(frontier) #getting the smallest f value
+    f, g, current, t_sum, collected, path = heapq.heappop(frontier)
+
+    #key to index into gScore dictionary
+    state_key = (current, tuple(sorted(collected)))
+    if g > gScore[state_key]: # skip exploring node if we’ve already found a cheaper way to this exact state
+      continue
     num_states_explored += 1
 
     #check if we are at the goal and have enough treasure
@@ -71,12 +83,13 @@ def pathfinding(filepath):
       optimal_path_cost = g
       break #return
 
+
     #adding our node & treasure sum to the explored nodes.
-    #try removing treasure sum from here.
-    state = (current, t_sum)
-    if state in explored:
-      continue
-    explored.add(state)
+    # state = current
+    # if state in explored:
+    #   continue
+    # else:
+    #   explored.add(state)  
 
     # Explore neighbors (up, down, left, right)
     for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
@@ -87,48 +100,37 @@ def pathfinding(filepath):
         continue
 
       #calculate new g, h, f values
-      if current in treasures_state_explored and treasures_state_explored[current] == False:
-        new_t = t_sum + treasures.get((neighbour_row, neighbour_col), 0) #when we get it, add it to explored, check that its done, reset for each path
-        treasures_state_explored[(neighbour_row, neighbour_col)] = True #set treasure to true after we pick it up
-        print(current, "new t sum should not be 0", new_t)
-      else:
-        new_t = t_sum
-        print(current, "new t sum should be 0", new_t)
+      #new_t = t_sum + treasures.get((neighbour_row, neighbour_col), 0)
+
+      # copy the set only if we pick a new treasure
+      new_collected = collected
+      new_t = t_sum
+
+      # if neighbor is a treasure & we haven't collected it yet
+      if (neighbour_row, neighbour_col) in treasures and (neighbour_row, neighbour_col) not in collected:
+        new_collected = set(collected)
+        new_collected.add((neighbour_row, neighbour_col))
+        new_t = t_sum + treasures[(neighbour_row, neighbour_col)]
+
       new_g = g + 1
       new_h = min(heuristic((neighbour_row, neighbour_col), goal) for goal in goals)
       new_f = new_g + new_h
+      new_key = ((neighbour_row, neighbour_col), tuple(sorted(new_collected)))
 
-      #adding all the neighbours to the frontier.
-      heapq.heappush(frontier, (new_f, new_g, (neighbour_row, neighbour_col), new_t, path + [(neighbour_row, neighbour_col)]))
-  
+      # only push if we found a better path to this exact state (neighbor node, set of collected treasures)
+      if new_g < gScore.get(new_key, float('inf')):
+        gScore[new_key] = new_g
+        heapq.heappush(
+          frontier,
+          (new_f, new_g, (neighbour_row, neighbour_col), new_t, new_collected, path + [(neighbour_row, neighbour_col)])
+        )
+      #getting minimum f value
+      #heapq.heappush(frontier, (new_f, new_g, (neighbour_row, neighbour_col), new_t, path + [(neighbour_row, neighbour_col)]))
+
   # optimal_path is a list of coordinate of squares visited (in order)
   # optimal_path_cost is the cost of the optimal path
   # num_states_explored is the number of states explored during A* search
   return optimal_path, optimal_path_cost, num_states_explored
 
-
-result = pathfinding("Examples\Examples\Example0\grid.txt")
+result = pathfinding("Examples\Examples\Example3\grid.txt")
 print(result)
-
-# right now code is traversing over the same treasure multiple times 
-# general -   how detailed should assignment answers be?    overview of our understanding.        
-
-#             is our code formatting correctly? do the functions we have make sense?  >>>yes 
-#        
-#             how to submit - one person or multiple? >>>one person       
-#   
-#             is heapq.heappush allowed? (it's in standard python library)    >>>we are good
-#    
-#             how do you want us to store the fact that a trewasure has been explored? 
-#             from our research we could use frozenset but not sure if that's allowed or a bitmap. 
-#             We are more familiar with bitmaps . 
-#             but we would honestly prefer to just store this info in an array or something.   
-#             >>>#when we get it, add it to explored, check that its done, reset for each path
-#             >>>dont use bitmap  or frozenset, just store the fact that the treasure has been picked up.
-
-# #S,0,3
-# 0,0,0
-# 2,X,G
-# Correct output: [(0, 0), (1, 0), (2, 0), (1, 0), (1, 1), (1, 2), (0, 2), (1, 2), (2, 2)] 8 24
-# Our output: [(0, 0), (0, 1), (0, 2), (0, 1), (0, 2), (1, 2), (2, 2)] 6 32
-
