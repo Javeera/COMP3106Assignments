@@ -23,7 +23,8 @@ Question 3
     What heuristic did you use for A* search for this environment? Show that your heuristic is consistent.
     
     The heuristic we used is the Manhattan Heuristic which is commonly used for grids in which the agent can only move up, down, left or right.
-
+    h(n) = min_(gEG) Manhattan(n,g)
+    Manhattan distance = |r_n - r_g| + |c_n - c_g|
 
 Question 4
     Suggest a particular instance of this problem (i.e. grid) where A* search using your heuristic would find the optimal solution faster than uniform cost search.
