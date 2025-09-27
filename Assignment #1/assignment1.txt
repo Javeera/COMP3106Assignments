@@ -25,6 +25,10 @@ Question 3
     The heuristic we used is the Manhattan Heuristic which is commonly used for grids in which the agent can only move up, down, left or right.
     h(n) = min_(gEG) Manhattan(n,g)
     Manhattan distance = |r_n - r_g| + |c_n - c_g|
+    For any neighbour of n' of n, the step cost c(n, n') = 1. For any fixed goal g, Manhattan(n,g) <= 1 + Manhattan(n',g) by the triangle inequality on the L1 metric
+    Taking the minimum:
+        h(n) = min_g Manhattan(n,g) <= 1 + min_g Manhattan(n',g) = 1+h(n')
+    Therefore h is consistent
 
 Question 4
     Suggest a particular instance of this problem (i.e. grid) where A* search using your heuristic would find the optimal solution faster than uniform cost search.
