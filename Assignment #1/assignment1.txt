@@ -43,6 +43,14 @@ Question 4
 Question 5
     Suggest a particular instance of this problem (i.e. grid) where a greedy heuristic search using your heuristic would not find the optimal solution
 
+    S,0,G
+    0,X,0
+    5,0,0
+
+    Greedy heuristic search expands the node with the smallest h and ignores the g value. It can cause the agent to backtrack when it doesnt need to.
+    For example in this grid greedy heuristic search would go straight to the goal then backtrack to the treasure then head towards the goal again.
+    Greedy Heuristic: (0,0), (0,1), (0,2), (0,1), (0,0), (1,0), (2,0), (), (), (), ()
+    Our Agent: (), (), (), (), (), (), (), ()
 
 
 Question 6
