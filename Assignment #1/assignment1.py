@@ -19,6 +19,7 @@ def grid_traversal(filepath):
   goals = [] #location of goals
   walls = set() #location of walls
   treasures = {} #stores location & value
+  treasures_state_explored = {} #store location & state
   rows = len(grid)
   cols = len(grid[0]) if rows > 0 else 0
 
@@ -33,8 +34,9 @@ def grid_traversal(filepath):
         walls.add((i, j))
       elif grid[i][j].isdigit():
         treasures[(i, j)] = int(grid[i][j])
+        treasures_state_explored[(i, j)] = int(grid[i][j])
 
-  return grid, start, goals, walls, treasures, rows, cols
+  return start, goals, walls, treasures, treasures_state_explored, rows, cols
 
 
 def heuristic(a, b):
@@ -47,20 +49,20 @@ def heuristic(a, b):
 # The pathfinding function must implement A* search to find the goal state
 def pathfinding(filepath):
 
-  grid, start_node, goals, walls, treasures, rows, cols = grid_traversal(filepath)
+  start_node, goals, walls, treasures, treasures_state_explored, rows, cols = grid_traversal(filepath)
 
   # A* search algorithm
   frontier = []
   start_g = 0
   start_h = min(heuristic(start_node, goal) for goal in goals)
   start_f = start_g + start_h
-  heapq.heappush(frontier, (start_f, start_g, start_node, 0, [start_node]))  # (f, g, pos, treasure_sum, path)
+  heapq.heappush(frontier, (start_f, start_g, start_node, 0, [start_node]))  # adding start state to the fronteir
 
   explored = set()  # closed set of (pos, treasure_sum)
   num_states_explored = 0
 
   while frontier:
-    f, g, current, t_sum, path = heapq.heappop(frontier)
+    f, g, current, t_sum, path = heapq.heappop(frontier) #getting the smallest f value
     num_states_explored += 1
 
     #check if we are at the goal and have enough treasure
@@ -70,10 +72,11 @@ def pathfinding(filepath):
       break #return
 
     #adding our node & treasure sum to the explored nodes.
+    #try removing treasure sum from here.
     state = (current, t_sum)
     if state in explored:
       continue
-    explored.add(state)  
+    explored.add(state)
 
     # Explore neighbors (up, down, left, right)
     for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
@@ -84,21 +87,25 @@ def pathfinding(filepath):
         continue
 
       #calculate new g, h, f values
-      new_t = t_sum + treasures.get((neighbour_row, neighbour_col), 0) #when we get it, add it to explored, check that its done, reset for each path
+      if current in treasures_state_explored and treasures_state_explored[current] == False:
+        new_t = t_sum + treasures.get((neighbour_row, neighbour_col), 0) #when we get it, add it to explored, check that its done, reset for each path
+        treasures_state_explored[(neighbour_row, neighbour_col)] = True #set treasure to true after we pick it up
+      else:
+        new_t = t_sum
       new_g = g + 1
       new_h = min(heuristic((neighbour_row, neighbour_col), goal) for goal in goals)
       new_f = new_g + new_h
 
-      #getting minimum f value
+      #adding all the neighbours to the frontier.
       heapq.heappush(frontier, (new_f, new_g, (neighbour_row, neighbour_col), new_t, path + [(neighbour_row, neighbour_col)]))
-
+  
   # optimal_path is a list of coordinate of squares visited (in order)
   # optimal_path_cost is the cost of the optimal path
   # num_states_explored is the number of states explored during A* search
   return optimal_path, optimal_path_cost, num_states_explored
 
 
-result = pathfinding("Assignment #1\Examples\Examples\Example0\grid.txt")
+result = pathfinding("Examples\Examples\Example0\grid.txt")
 print(result)
 
 # right now code is traversing over the same treasure multiple times 
