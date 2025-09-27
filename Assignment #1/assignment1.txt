@@ -32,8 +32,13 @@ Question 3
 
 Question 4
     Suggest a particular instance of this problem (i.e. grid) where A* search using your heuristic would find the optimal solution faster than uniform cost search.
-
     
+    S,2,3,G
+    0,0,3,X
+    X,0,0,0
+
+    USC gives all nodes at the same depth the same priority, so it would unessecarily explore the second row of the grid, 
+    even though the agent doesn't need to go in the second row at all. A* search would pinpoint which direction is best to travel in and the agent would know to just go straight right on the first row and not explore the second row.
 
 Question 5
     Suggest a particular instance of this problem (i.e. grid) where a greedy heuristic search using your heuristic would not find the optimal solution
