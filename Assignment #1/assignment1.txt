@@ -49,8 +49,10 @@ Question 5
 
     Greedy heuristic search expands the node with the smallest h and ignores the g value. It can cause the agent to backtrack when it doesnt need to.
     For example in this grid greedy heuristic search would go straight to the goal then backtrack to the treasure then head towards the goal again.
-    Greedy Heuristic: (0,0), (0,1), (0,2), (0,1), (0,0), (1,0), (2,0), (), (), (), ()
-    Our Agent: (), (), (), (), (), (), (), ()
+    Greedy Heuristic: (0,0), (0,1), (0,2), (0,1), (0,0), (1,0), (2,0), (2,1), (2,2), (1,2), (0,2)
+        Cost: 10
+    Our Agent: (0,0), (1,0), (2,0), (2,1), (2,2), (1,2), (0,2)
+        Cost: 6
 
 
 Question 6
