@@ -64,3 +64,5 @@ Question 5
 Question 6
     Consider a modification of this problem where your agent need only pick up treasures with value totalling at least 1. Determine whether your heuristic is still consistent
 
+    A smaller treasure value does not change the consistency of our heuristic.
+    All our logic in Question 3 still applies when we need 1 treasure.
