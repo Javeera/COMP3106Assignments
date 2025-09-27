@@ -90,8 +90,10 @@ def pathfinding(filepath):
       if current in treasures_state_explored and treasures_state_explored[current] == False:
         new_t = t_sum + treasures.get((neighbour_row, neighbour_col), 0) #when we get it, add it to explored, check that its done, reset for each path
         treasures_state_explored[(neighbour_row, neighbour_col)] = True #set treasure to true after we pick it up
+        print("new t sum should not be 0", new_t)
       else:
         new_t = t_sum
+        print("new t sum should be 0", new_t)
       new_g = g + 1
       new_h = min(heuristic((neighbour_row, neighbour_col), goal) for goal in goals)
       new_f = new_g + new_h
