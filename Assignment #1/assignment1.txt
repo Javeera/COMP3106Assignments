@@ -1,7 +1,7 @@
 Question 1
     What type of agent have you implemented (simple reflex agent, model-based reflex agent, goal-based agent, or utility-based agent)?
     
-    We have implemented a goal based agent.
+    We have implemented a goal based agent. 
 
 Question 2
     A
@@ -66,3 +66,9 @@ Question 6
 
     A smaller treasure value does not change the consistency of our heuristic.
     All our logic in Question 3 still applies when we need 1 treasure.
+    h(n) = min_(gEG) Manhattan(n,g)
+    Manhattan distance = |r_n - r_g| + |c_n - c_g|
+    For any neighbour of n' of n, the step cost c(n, n') = 1. For any fixed goal g, Manhattan(n,g) <= 1 + Manhattan(n',g) by the triangle inequality on the L1 metric
+    Taking the minimum:
+        h(n) = min_g Manhattan(n,g) <= 1 + min_g Manhattan(n',g) = 1+h(n')
+    Therefore h is consistent
