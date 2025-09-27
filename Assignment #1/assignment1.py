@@ -35,9 +35,8 @@ def grid_traversal(filepath):
         walls.add((i, j))
       elif grid[i][j].isdigit() and int(grid[i][j]) > 0:
         treasures[(i, j)] = int(grid[i][j])
-        treasures_state_explored[(i, j)] = int(grid[i][j])
 
-  return start, goals, walls, treasures, treasures_state_explored, rows, cols
+  return start, goals, walls, treasures, rows, cols
 
 
 def heuristic(a, b):
@@ -52,7 +51,7 @@ def pathfinding(filepath):
   #### only one start node
 
   #### only one start node
-  grid, start_node, goals, walls, treasures, rows, cols = grid_traversal(filepath)
+  start_node, goals, walls, treasures, rows, cols = grid_traversal(filepath)
 
   # A* search algorithm
   frontier = []
