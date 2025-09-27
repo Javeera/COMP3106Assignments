@@ -11,13 +11,13 @@ Question 2
     C
         Deterministic
     D
-        Sequential
+        Sequential. The agent decides which square to go on next based off of which treasures it already collected and which ones it needs to collect..
     E
-        Static
+        Static. None of the elements change during the traversal.
     F
-        Discrete
+        Discrete. grid cells, moves and treasure are all discrete.
     G
-        Known
+        Known. We have the full map from the beginning with all the info.
 
 Question 3
     What heuristic did you use for A* search for this environment? Show that your heuristic is consistent.
