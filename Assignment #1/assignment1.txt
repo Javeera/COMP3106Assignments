@@ -28,10 +28,19 @@ Question 3
 
     For a heuristic to be consistent, it must satisfy the following two conditions:
     1. If for all nodes n and successors n' h(n) <= cost(n,n') + h(n')
-         For any neighbour of n' of n, the step cost c(n, n') = 1. For any fixed goal g, Manhattan(n,g) <= 1 + Manhattan(n',g) by the triangle inequality on the L1 metric
-    Taking the minimum:
-        h(n) = min__g Manhattan(n,g) <= 1 + min_g Manhattan(n',g) = 1+h(n')
-    Therefore, h is consistent
+        h(n) = |x-x_y|+|y-y_g|
+        h(n') = |x'-x_y|+|y'-y_y|
+        Since n' is a neighbour of n, either |x-x'|=1 and y=y' OR |y-y'|=1 and x=x'
+        Therefore |x-x'|+|y-y'|=1 and n' is 1 unit away from n in L1 metric
+        For any neighbour of n' of n, the step cost c(n, n') = 1. Manhattan(n,n') = 1
+        
+        For any fixed goal g, Manhattan(n,g) <= 1 + Manhattan(n',g) by the triangle inequality on the L1 metric
+            Manhattan(n,g) <= Manhattan(n,n') + Manhattan(n',g)
+            Plug in Manhattan(n,n') = 1
+            Manhattan(n,g) <= 1 + Manhattan(n',g)
+            h(n) <= 1 + h(n')
+            h(n) <= c(n,n') + h(n')
+        This satisfies our condition and therefore, h is consistent.
     2. h(goal) = 0
         h(g) = min__(g'EG) d_1(g_1,g') <= d_1(g,g) = 0
         since d_1 >= 0 h(g) >= 0. Therefore h(g) = 0
