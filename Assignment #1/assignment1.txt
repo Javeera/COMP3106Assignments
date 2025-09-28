@@ -5,11 +5,11 @@ Question 1
 
 Question 2
     A
-        Fully Observable
+        Fully Observable. The agent has access to the whole state of the environment throughout the traversal.
     B
         Single Agent
     C
-        Deterministic
+        Deterministic. Every action the agent takes has a fixed outcome.
     D
         Sequential. The agent decides which square to go on next based off of which treasures it already collected and which ones it still needs to collect.
     E
