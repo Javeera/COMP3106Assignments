@@ -1,7 +1,7 @@
 Question 1
     What type of agent have you implemented (simple reflex agent, model-based reflex agent, goal-based agent, or utility-based agent)?
     
-    We have implemented a goal based agent. 
+    We have implemented a goal based agent. It determines its movements based off of getting closer to the goal state.
 
 Question 2
     A
@@ -11,13 +11,13 @@ Question 2
     C
         Deterministic
     D
-        Sequential. The agent decides which square to go on next based off of which treasures it already collected and which ones it needs to collect..
+        Sequential. The agent decides which square to go on next based off of which treasures it already collected and which ones it still needs to collect.
     E
-        Static. None of the elements change during the traversal.
+        Static. None of the elements innt eh environment change while the agent traverses.
     F
-        Discrete. grid cells, moves and treasure are all discrete.
+        Discrete. The grid cells, agent actions and treasure values are all discrete.
     G
-        Known. We have the full map from the beginning with all the info.
+        Known. The agent is given the full map from the beginning with all needed info such as the goal(s) and treasure locations/values.
 
 Question 3
     What heuristic did you use for A* search for this environment? Show that your heuristic is consistent.
