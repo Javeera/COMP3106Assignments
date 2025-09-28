@@ -40,10 +40,12 @@ Question 3
             Manhattan(n,g) <= 1 + Manhattan(n',g)
             h(n) <= 1 + h(n')
             h(n) <= c(n,n') + h(n')
-        This satisfies our condition and therefore, h is consistent.
+        This satisfies our first condition.
     2. h(goal) = 0
         h(g) = min__(g'EG) d_1(g_1,g') <= d_1(g,g) = 0
-        since d_1 >= 0 h(g) >= 0. Therefore h(g) = 0
+        since d_1 >= 0 h(g) >= 0. Therefore h(g) = 0\
+        This satisfies our second condition
+    Therefore, h is consistent.
 
 Question 4
     Suggest a particular instance of this problem (i.e. grid) where A* search using your heuristic would find the optimal solution faster than uniform cost search.
