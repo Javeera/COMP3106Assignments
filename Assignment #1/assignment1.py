@@ -1,4 +1,4 @@
-# Gurleen 
+# Gurleen Bassali 101260100
 # Fatema 
 # Javeera Faizi 101191910
 # Name this file to assignment1.py when you submit
@@ -19,7 +19,6 @@ def grid_traversal(filepath):
   goals = [] #location of goals
   walls = set() #location of walls
   treasures = {} #stores location & value
-  ### why is walls a set & goals a list
 
   rows = len(grid)
   cols = len(grid[0]) if rows > 0 else 0
@@ -48,9 +47,6 @@ def heuristic(a, b):
 
 # The pathfinding function must implement A* search to find the goal state
 def pathfinding(filepath):
-  #### only one start node
-
-  #### only one start node
   start_node, goals, walls, treasures, rows, cols = grid_traversal(filepath)
 
   # A* search algorithm
@@ -62,18 +58,24 @@ def pathfinding(filepath):
 
   # best cost so far to reach a specific (node pos, collected_set of treasures) state.
   # Key must be hashable: (pos, tuple(sorted(collected_set)))
-  gScore = { (start_node, ()): 0 } #gScore[state] stores the best cost we have found so far to reach that state.
+  #gScore = { (start_node, ()): 0 } #gScore[state] stores the best cost we have found so far to reach that state.
 
-  #explored = set()  # closed set of (pos, treasure_sum)
   num_states_explored = 0
+  explored = set() 
 
   while frontier:
     f, g, current, t_sum, collected, path = heapq.heappop(frontier)
 
     #key to index into gScore dictionary
+    # state_key = (current, tuple(sorted(collected)))
+    # if g > gScore[state_key]: # skip exploring node if we’ve already found a cheaper way to this exact state
+    #   continue
+
+    #consistent heuristic ensures every time we explore a state (node, set of collected treasures) we've already found optimal cost
     state_key = (current, tuple(sorted(collected)))
-    if g > gScore[state_key]: # skip exploring node if we’ve already found a cheaper way to this exact state
-      continue
+    if state_key in explored: #don't re explore if we've already explored this exact state
+        continue
+    explored.add(state_key)
     num_states_explored += 1
 
     #check if we are at the goal and have enough treasure
@@ -81,14 +83,6 @@ def pathfinding(filepath):
       optimal_path = path
       optimal_path_cost = g
       break #return
-
-
-    #adding our node & treasure sum to the explored nodes.
-    # state = current
-    # if state in explored:
-    #   continue
-    # else:
-    #   explored.add(state)  
 
     # Explore neighbors (up, down, left, right)
     for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
@@ -114,15 +108,15 @@ def pathfinding(filepath):
       new_g = g + 1
       new_h = min(heuristic((neighbour_row, neighbour_col), goal) for goal in goals)
       new_f = new_g + new_h
-      new_key = ((neighbour_row, neighbour_col), tuple(sorted(new_collected)))
+      #new_key = ((neighbour_row, neighbour_col), tuple(sorted(new_collected)))
 
       # only push if we found a better path to this exact state (neighbor node, set of collected treasures)
-      if new_g < gScore.get(new_key, float('inf')):
-        gScore[new_key] = new_g
-        heapq.heappush(
-          frontier,
-          (new_f, new_g, (neighbour_row, neighbour_col), new_t, new_collected, path + [(neighbour_row, neighbour_col)])
-        )
+      # if new_g < gScore.get(new_key, float('inf')):
+      #   gScore[new_key] = new_g
+      heapq.heappush(
+        frontier,
+        (new_f, new_g, (neighbour_row, neighbour_col), new_t, new_collected, path + [(neighbour_row, neighbour_col)])
+      )
       #getting minimum f value
       #heapq.heappush(frontier, (new_f, new_g, (neighbour_row, neighbour_col), new_t, path + [(neighbour_row, neighbour_col)]))
 
