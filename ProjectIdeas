@@ -1,0 +1,52 @@
+Our Ideas:
+- Something related to plant growth. There's a lot of factors to this sso it could be cute and have real-life uses.
+- 
+- 
+- 
+
+POTENTIAL PROJECT IDEAS –COMP 3106 INTRODUCTION TO ARTIFICIAL INTELLIGENCE
+
+The following list of project ideas is not exhaustive; any project that solves a problem using artificial intelligence
+may be chosen. Some of these project ideas may require a dataset; you are responsible for
+creating/finding/procuring a dataset if necessary.
+Note that it is recommended to do a project that has some novel aspect. Implementing a well-known solution to a
+well-known problem is not very interesting. For all of these ideas, consider a novel variant (e.g. add/remove a
+constraint, use different dataset, pre-process that data differently, tweak a method, etc.).
+
+  1. N-queens variant
+    The n-queens problem is a classic problem in artificial intelligence that can be solved using graph search.
+    Consider implementing a solution to an interesting variant of the n-queens problem.
+
+  2. Card game playing agent
+    Card games are an interesting variant on adversarial search where the environment is not fully observable
+    (i.e. cannot see cards in opponent’s hand or deck). Consider implementing a card game playing agent for a
+    variant of your favourite game of cards.
+
+  3. Path planning in multi-agent environments
+    In class, we considered path planning in a particular type of task environment, involving a single agent.
+    Consider planning a path in a multiple agent environment with agents who have different goals.
+
+  4. Decision support system
+    Decision support systems use data and other information to aid humans in decision-making processes.
+    Rule-based or fuzzy rule-based systems are often used for decision support because they can provide
+    some degree of explanation or transparency. Consider implementing a decision support system in
+    environments such as medical diagnosis, business, or manufacturing.
+
+  5. Video game playing agent
+    Many video games could be played automatically by an intelligent agent. Consider using reinforcement
+    learning to train an agent to play a simple video game.
+
+  6. Game of life variant
+    The game of life is a simple model of artificial life played on a grid. Consider implementing a more
+    sophisticated version of the game of life that incorporates more realistic patterns of life (e.g. resource
+    needs, other species, etc.).
+
+  7. Sentiment analysis
+    Social media is a vast source of data that can be used to understand popular opinions toward a variety of
+    topics or issues. Using methods from natural language processing, implement methods to analyze the
+    sentiments of social media posts about a specific topic.
+
+  8. Image classification
+    Over the past several years, image classification using convolutional neural networks has exploded in
+    popularity. Consider developing a unique image classifier for a novel task (e.g. rare disease from medical
+    imaging) using a convolutional neural network.
