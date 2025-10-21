@@ -1,8 +1,12 @@
+# Fatema Lokhandwala (SN: 101259465)
+# Gurleen (SN: )
+# Javeera (SN: )
+
 import csv
 import math
 from collections import defaultdict
 
-#helper functions
+# helper functions
 def mean(values):
     return sum(values) / len(values)
 
@@ -27,7 +31,7 @@ def read_snake_dataset(path):
         # Skip completely empty lines
         if not cols or all((c.strip() == "" for c in cols)):
           continue
-        
+
         cls = cols[0].strip().lower()
         try:
             length = float(cols[1])
@@ -44,7 +48,7 @@ def read_snake_dataset(path):
           "speed":  speed,
         })
 
-      return rows
+        return rows
 
 
         
@@ -53,6 +57,35 @@ def read_snake_dataset(path):
 
 
 def naive_bayes_classifier(dataset_filepath, snake_measurements):
+    # Load the dataset
+    dataset = read_snake_dataset(dataset_filepath)
+
+    # Organize the dataset by class
+    class_features = defaultdict(lambda: {"length": [], "weight": [], "speed": []})
+    class_counts = defaultdict(int)
+
+    for row in dataset:
+        cls = row["class"]
+        class_counts[cls] += 1
+        class_features[cls]["length"].append(row["length"])
+        class_features[cls]["weight"].append(row["weight"])
+        class_features[cls]["speed"].append(row["speed"])
+
+    total_snakes = sum(class_counts.values())
+
+    # Calculate the mean, standard deviation, and priors for each class
+    class_stats = {}
+    for cls in class_counts:
+        class_stats[cls] = {
+            "mean_length": mean(class_features[cls]["length"]),
+            "std_length": standard_deviation(class_features[cls]["length"]),
+            "mean_weight": mean(class_features[cls]["weight"]),
+            "std_weight": standard_deviation(class_features[cls]["weight"]),
+            "mean_speed": mean(class_features[cls]["speed"]),
+            "std_speed": standard_deviation(class_features[cls]["speed"]),
+            "prior": class_counts[cls] / total_snakes
+        }
+        
   # dataset_filepath is the full file path to a CSV file containing the dataset
   # snake_measurements is a list of [length, weight, speed] measurements for a snake
 
