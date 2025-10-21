@@ -51,11 +51,6 @@ def read_snake_dataset(path):
         return rows #returns array of rows with classes, links weights and speed
 
 
-        
-
-
-
-
 def naive_bayes_classifier(dataset_filepath, snake_measurements):
     # Load the dataset
     dataset = read_snake_dataset(dataset_filepath)
@@ -92,3 +87,6 @@ def naive_bayes_classifier(dataset_filepath, snake_measurements):
   # most_likely_class is a string indicating the most likely class, either "anaconda", "cobra", or "python"
   # class_probabilities is a three element list indicating the probability of each class in the order [anaconda probability, cobra probability, python probability]
     return most_likely_class, class_probabilities
+
+
+#TODO: function to determine class of the snake
