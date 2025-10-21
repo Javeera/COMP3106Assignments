@@ -1,6 +1,11 @@
 # Fatema Lokhandwala (SN: 101259465)
-# Gurleen (SN: )
+# Gurleen (SN: 101260100)
 # Javeera (SN: 101191910)
+
+#written part
+#q1 and q4
+#q5 and q6
+#q2 and q3 Fatema Lokhandwala
 
 import csv
 import math
@@ -87,6 +92,5 @@ def naive_bayes_classifier(dataset_filepath, snake_measurements):
   # most_likely_class is a string indicating the most likely class, either "anaconda", "cobra", or "python"
   # class_probabilities is a three element list indicating the probability of each class in the order [anaconda probability, cobra probability, python probability]
     return most_likely_class, class_probabilities
-
 
 #TODO: function to determine class of the snake
