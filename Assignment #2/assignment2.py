@@ -114,5 +114,3 @@ def naive_bayes_classifier(dataset_filepath, snake_measurements):
   most_likely_class = species_list[class_probabilities.index(max(class_probabilities))]
 
   return most_likely_class, class_probabilities
-
-#TODO: function to determine class of the snake
