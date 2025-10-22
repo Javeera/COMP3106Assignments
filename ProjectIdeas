@@ -5,10 +5,16 @@ Our Ideas:
 - Agent helps plan what to make for dinner based on certain factors of every family memeber (ex. if they're feeling weel, if they have a game coming up, etc.) It also takes into account the seasonal ingredients.
   - Scope is probably too much for us
   - Goal: to choose dinner that is best suited for the family's health
-- 
-- 
-- 
-
+- Medical related agent
+  - Focus on one disease. See if a patient is likely to develop disease.
+- Astronomy related Agent
+  - Organize data from satellite to determine the celestial body. (asteroid, planet etc.)
+  - temp data, low temp = far away from sun for example
+- Astronomy related Agent
+  - Determines if an object is an asteroid, if it is then determine the likelyhood of an asteroid hitting earth.
+  - https://aerospace.org/article/artificial-intelligence-takes-asteroids 
+- Agriculture idea
+  - Analyze soil and land, determine if a plot of land is suitable for Agriculture
 
 
 
