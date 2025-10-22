@@ -1,10 +1,10 @@
 # Fatema Lokhandwala (SN: 101259465)
-# Gurleen (SN: 101260100)
-# Javeera (SN: 101191910)
+# Gurleen Bassali (SN: 101260100)
+# Javeera Faizi (SN: 101191910)
 
 #written part
-#q1 and q4
-#q5 and q6
+#q1 and q4 Javeera Faizi
+#q5 and q6 Gurleen Bassali
 #q2 and q3 Fatema Lokhandwala
 
 import csv
