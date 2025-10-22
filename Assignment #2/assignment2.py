@@ -17,7 +17,7 @@ def mean(values):
 
 def standard_deviation(values, eps=1e-6):
   pop_mean = mean(values)
-  std_deviation = math.sqrt(sum((x - pop_mean) ** 2 for x in values) / len(values))
+  std_deviation = math.sqrt(sum((x - pop_mean) ** 2 for x in values) / (len(values) -1))
 
   # prevent division by zero in case std_deviation is 0 (if all values in a class feature are identical)
   std_deviation = max(std_deviation, eps)
