@@ -57,6 +57,9 @@ def read_snake_dataset(path):
 
 
 def naive_bayes_classifier(dataset_filepath, snake_measurements):
+  # dataset_filepath is the full file path to a CSV file containing the dataset
+  # snake_measurements is a list of [length, weight, speed] measurements for a snake
+
   # Load the dataset
   dataset = read_snake_dataset(dataset_filepath)
 
@@ -86,11 +89,6 @@ def naive_bayes_classifier(dataset_filepath, snake_measurements):
       "prior": class_counts[cls] / total_snakes
     }
         
-    # dataset_filepath is the full file path to a CSV file containing the dataset
-    # snake_measurements is a list of [length, weight, speed] measurements for a snake
-
-    # most_likely_class is a string indicating the most likely class, either "anaconda", "cobra", or "python"
-    # class_probabilities is a three element list indicating the probability of each class in the order [anaconda probability, cobra probability, python probability]
   length, weight, speed = snake_measurements
   class_probabilities = []
 
@@ -112,50 +110,7 @@ def naive_bayes_classifier(dataset_filepath, snake_measurements):
   #get the max (most likely class)
   species_list = ["anaconda", "cobra", "python"]
   most_likely_class = species_list[class_probabilities.index(max(class_probabilities))]
-
+    
+  # most_likely_class is a string indicating the most likely class, either "anaconda", "cobra", or "python"
+  # class_probabilities is a three element list indicating the probability of each class in the order [anaconda probability, cobra probability, python probability]
   return most_likely_class, class_probabilities
-
-
-#main for testing
-if __name__ == "__main__":
-    import csv
-    import os
-
-    for i in range(4):
-        example_folder = f"Examples/Example{i}"
-
-        # --- Read snake measurements (handles [ ] or no brackets) ---
-        with open(f"{example_folder}/snake_measurements.txt", 'r') as f:
-            line = f.readline().strip()
-            line = line.replace('[', '').replace(']', '')
-            snake_measurements = [float(x) for x in line.split(',') if x.strip()]
-
-        # --- Read expected most likely class ---
-        with open(f"{example_folder}/most_likely_class.txt", 'r') as f:
-            expected_class = f.readline().strip().lower()
-
-        # --- Read expected probabilities ---
-        with open(f"{example_folder}/class_probabilities.txt", 'r') as f:
-            line = f.readline().strip()
-            line = line.replace('[', '').replace(']', '')
-            expected_probs = [float(x) for x in line.split(',') if x.strip()]
-
-        # --- Run classifier ---
-        cls, probs = naive_bayes_classifier(f"{example_folder}/dataset.csv", snake_measurements)
-
-        # --- Print comparison ---
-        print(f"\n===== Example{i} =====")
-        print(f"Snake measurements: {snake_measurements}")
-        print(f"Predicted class: {cls}")
-        print(f"Expected  class: {expected_class}")
-
-        print("\nPredicted probabilities:")
-        print([round(p, 6) for p in probs])
-        print("Expected probabilities:")
-        print([round(p, 6) for p in expected_probs])
-
-        # --- Simple correctness check ---
-        correct_class = cls.lower() == expected_class
-        prob_diff = sum(abs(a - b) for a, b in zip(probs, expected_probs))
-        print("\n✅ Class Match:" if correct_class else "\n❌ Class Mismatch!", expected_class)
-        print(f"🔹 Total probability difference: {prob_diff:.6f}")
