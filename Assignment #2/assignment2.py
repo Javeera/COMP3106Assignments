@@ -2,11 +2,6 @@
 # Gurleen Bassali (SN: 101260100)
 # Javeera Faizi (SN: 101191910)
 
-#written part
-#q1 and q4 Javeera Faizi
-#q5 and q6 Gurleen Bassali
-#q2 and q3 Fatema Lokhandwala
-
 import csv
 import math
 from collections import defaultdict
@@ -15,6 +10,7 @@ from collections import defaultdict
 def mean(values):
   return sum(values) / len(values)
 
+# function to calculate standard deviation
 def standard_deviation(values, eps=1e-6):
   pop_mean = mean(values)
   std_deviation = math.sqrt(sum((x - pop_mean) ** 2 for x in values) / (len(values) -1))
@@ -23,11 +19,13 @@ def standard_deviation(values, eps=1e-6):
   std_deviation = max(std_deviation, eps)
   return std_deviation 
 
+# function to calculate feature probability
 def feature_probability(x, pop_mean, std_deviation):
   first_term = 1.0 / (math.sqrt(2.0 * math.pi * (std_deviation ** 2)) )
   exp = (x - pop_mean) / std_deviation
   return first_term * math.exp(-0.5 * (exp ** 2))
-   
+
+# function to read the snake dataset
 def read_snake_dataset(path):
   rows = []
 
@@ -53,40 +51,41 @@ def read_snake_dataset(path):
         "weight": weight,
         "speed":  speed,
       })
-  return rows #returns array of rows with classes, links weights and speed
+  #returns array of rows with classes, links weights and speed
+  return rows
 
-
+# a function for the naive bayes classifier
 def naive_bayes_classifier(dataset_filepath, snake_measurements):
   # dataset_filepath is the full file path to a CSV file containing the dataset
   # snake_measurements is a list of [length, weight, speed] measurements for a snake
 
-  # Load the dataset
+  # Loading the dataset
   dataset = read_snake_dataset(dataset_filepath)
 
-  # Organize the dataset by class
-  class_features = defaultdict(lambda: {"length": [], "weight": [], "speed": []})
-  class_counts = defaultdict(int)
+  # Organizing the dataset by class
+  class_characteristics = defaultdict(lambda: {"length": [], "weight": [], "speed": []})
+  class_num = defaultdict(int)
 
   for row in dataset:
     cls = row["class"]
-    class_counts[cls] += 1
-    class_features[cls]["length"].append(row["length"])
-    class_features[cls]["weight"].append(row["weight"])
-    class_features[cls]["speed"].append(row["speed"])
+    class_num[cls] += 1
+    class_characteristics[cls]["length"].append(row["length"])
+    class_characteristics[cls]["weight"].append(row["weight"])
+    class_characteristics[cls]["speed"].append(row["speed"])
 
-  total_snakes = sum(class_counts.values())
+  total_snakes = sum(class_num.values())
 
-  # Calculate the mean, standard deviation, and priors for each class
+  # for each class, calculating the mean, standard deviation, and priors
   class_stats = {}
-  for cls in class_counts:
+  for cls in class_num:
     class_stats[cls] = {
-      "mean_length": mean(class_features[cls]["length"]),
-      "std_length": standard_deviation(class_features[cls]["length"]),
-      "mean_weight": mean(class_features[cls]["weight"]),
-      "std_weight": standard_deviation(class_features[cls]["weight"]),
-      "mean_speed": mean(class_features[cls]["speed"]),
-      "std_speed": standard_deviation(class_features[cls]["speed"]),
-      "prior": class_counts[cls] / total_snakes
+      "mean_length": mean(class_characteristics[cls]["length"]),
+      "std_length": standard_deviation(class_characteristics[cls]["length"]),
+      "mean_weight": mean(class_characteristics[cls]["weight"]),
+      "std_weight": standard_deviation(class_characteristics[cls]["weight"]),
+      "mean_speed": mean(class_characteristics[cls]["speed"]),
+      "std_speed": standard_deviation(class_characteristics[cls]["speed"]),
+      "prior": class_num[cls] / total_snakes
     }
         
   length, weight, speed = snake_measurements
@@ -98,16 +97,16 @@ def naive_bayes_classifier(dataset_filepath, snake_measurements):
         p_weight = feature_probability(weight, stats["mean_weight"], stats["std_weight"])
         p_speed  = feature_probability(speed,  stats["mean_speed"],  stats["std_speed"])
 
-        #naive bayes: multiply conditional probabilities with prior probability
+        # naive bayes: multiply conditional probabilities with prior probability
         posterior = stats["prior"] * p_length * p_weight * p_speed
         class_probabilities.append(posterior)
 
-  #normalize probabilities
-  #sum = 1
+  # normalize probabilities
+  # sum = 1
   total = sum(class_probabilities)
   class_probabilities = [p / total for p in class_probabilities]
 
-  #get the max (most likely class)
+  # get the max (most likely class)
   species_list = ["anaconda", "cobra", "python"]
   most_likely_class = species_list[class_probabilities.index(max(class_probabilities))]
     
