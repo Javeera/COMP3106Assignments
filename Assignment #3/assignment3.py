@@ -80,9 +80,13 @@ class td_qlearning:
   def qvalue(self, state, action):
     # state is a string representation of a state
     # action is an integer representation of an action
+    Q_value = self.Q.get((state, action))
+    if Q_value is None:
+        # Fallback Q-value Q(s,a)=r(s)
+        Q_value = self.reward(state)
 
     # Return the learned q-value for the state-action pair
-    return round(self.Q.get((state, action)), 2)
+    return round(Q_value, 2)
 
   # Policy function - returns the optimal action for a given state
   def policy(self, state):
@@ -178,3 +182,5 @@ class td_qlearning:
 
 dir_path = "Examples/Example0/Trials"
 agent = td_qlearning(dir_path)
+agent.qvalue("3/2/1/-", 2)  # Example usage of qvalue method
+agent.policy("11/1/1/-")    # Example usage of policy method
