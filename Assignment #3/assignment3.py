@@ -1,11 +1,12 @@
 # Fatema Lokhandwala (101259465)
-# Gurleen
-# Javeera
+# Gurleen Bassali (101260100)
+# Javeera Faizi (101191910)
 
 # import statements
 import os
 import csv
 from collections import defaultdict
+import pandas as pd
 
 class td_qlearning:
 
@@ -15,6 +16,31 @@ class td_qlearning:
   def __init__(self, directory):
     # directory is the path to a directory containing trials through state space
     # Return nothing
+    self.q = {} #q table (state, action): value
+    self.rewards = {} #state rewards
+
+    #load all trials from the directory
+    trails = []
+    for file in os.listdir(directory):
+      if file.endswith(".csv"):
+        filepath = os.path.join(directory, file)
+        df = pd.read_csv(filepath, header=None)
+        trails.append(df)
+
+    #Q(s,a) = r(s)
+    #gets the state and action and initializes the q table with rewards
+    for trial in trails:
+      for row in trial:
+        if len(row) < 2:
+          continue
+        state = str(row[0]).strip()
+        action = int(row[1])
+        reward = self.rewards(state)
+        self.q[(state,action)] = reward
+
+    #TODO: Run Q-learning until convergence
+    converged = False
+    
 
   # implementing qvalue function
   def qvalue(self, state, action):
