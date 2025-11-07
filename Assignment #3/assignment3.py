@@ -33,7 +33,10 @@ class td_qlearning:
         state = str(s).strip()
         action = str(a)
         reward = self.reward(state)
-        self.Q[(state, action)] = reward # initially estimate Q(s,a) = r(s) for all state-action pairs observed in the trials
+
+        # don't update Q-value for terminal states
+        if action != "-":
+          self.Q[(state, action)] = reward # initially estimate Q(s,a) = r(s) for all state-action pairs observed in the trials
 
     print(self.Q)
     print(self.rewards)
