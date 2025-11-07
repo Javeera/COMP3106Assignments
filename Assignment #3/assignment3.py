@@ -40,7 +40,48 @@ class td_qlearning:
 
     #TODO: Run Q-learning until convergence
     converged = False
+      #go thru each trial (state, action)
+      for trial in trials:
+      #extract current state and action and next state
+      
+      #compute immediet rewards for next state
+      #make sure actions r valid
+      #if yes valid then update q value else use reward of next state
+      #td
+
+
+  def rewards(self, state):
+    #return the reward for a given state
+    if state in self.rewards: #i.e. if we already calculated the reward for this state
+      return self.rewards[state]
+    try:
+      c_bag = int(state.split('/')[0])
+      c_agent = int(state.split('/')[1])
+      c_opponent = int(state.split('/')[2])
+      winner = int(state.split('/')[3])
+    except:
+      return 0
     
+    if winner == 'A':
+      reward = c_agent #return reward
+    elif winner == 'O':
+      reward = -c_agent #return negative reward
+    else:
+      reward = 0
+    
+    self.rewards[state] = reward
+    return reward
+  
+  def available_actions(self, state):
+    # Return a list of integers representing the available actions in the given state
+    try:
+      c_bag = int(state.split('/')[0])
+    except:
+      return []
+
+    if c_bag <= 0:
+      return []
+    return [i for i in [1, 2, 3] if i <= c_bag]
 
   # implementing qvalue function
   def qvalue(self, state, action):
