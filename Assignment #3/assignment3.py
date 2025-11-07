@@ -18,40 +18,51 @@ class td_qlearning:
     # Constructor --> Returns nothing
     self.Q = {} #q table (state, action): value
     self.rewards = {} #state rewards
+    # list of trials, each trial is a list of (state, action) tuples
+    self.trials = [] # [[(state, action), ...], [...], ...]
 
     #load all trials from the directory
-    trials = []
     for file in os.listdir(directory):
       if file.endswith(".csv"):
         filepath = os.path.join(directory, file)
         df = pd.read_csv(filepath, header=None)
-        trials.append(df)
 
-    #gets all states and actions and initializes the q table with rewards
-    for trial in trials:
-      for s, a in trial.values:
+      #gets all states and actions and initializes the q table with rewards
+      seq = [] # list of (state, action) tuples for this trial
+      for s, a in df.values:
         state = str(s).strip()
         action = str(a)
         reward = self.reward(state)
+        seq.append((state, action)) # add (state, action) pair to sequence
 
         # don't update Q-value for terminal states
         if action != "-":
           self.Q[(state, action)] = reward # initially estimate Q(s,a) = r(s) for all state-action pairs observed in the trials
+      self.trials.append(seq) # add trial sequence to trials
 
     print(self.Q)
     print(self.rewards)
 
     #TODO: Run Q-learning until convergence
     converged = False
-      # Iterate over each trial (state, action)
-      for trial in trials:
-        for s, a in trial.values:
-      #extract current state and action and next state
-      
-      #compute immediet rewards for next state
-      #make sure actions r valid
-      #if yes valid then update q value else use reward of next state
-      #td
+    # Iterate over each sequence of trials
+    for seq in self.trials:
+      for i in range(len(seq) - 1):
+        state, action = seq[i] 
+        state_next, action_next = seq[i+1]
+
+        # if terminal state --> can't update Q-value
+        if action == "-": 
+            continue
+        action_next = int(action_next)          # convert action to integer
+        self.update(state, action, state_next)  # update Q-value    
+
+      # Each adjacent pair of rows in the csv is a transition (s, a) -> s'
+      # For every state transition in all trials:
+        # Update Q(s,a) using the Q-learning update equation
+          # Computes the target for the state-action pair
+          # Move Q(s,a) towards target
+        # Repeat over all trials until values stop changing (converge).
 
   # Qvalue function
   def qvalue(self, state, action):
@@ -59,7 +70,7 @@ class td_qlearning:
     # action is an integer representation of an action
 
     # Return the learned q-value for the state-action pair
-    return round(self.Q[state][action], 2)
+    return round(self.Q.get((state, action)), 2)
 
   # Policy function - returns the optimal action for a given state
   def policy(self, state):
@@ -147,9 +158,9 @@ class td_qlearning:
 
     # Q-learning update rule
     current_q = self.Q.get((state, action), self.reward(state)) # default to reward if Q value not found
-    target = self.target(state_next) 
-    q_new = current_q + self.alpha * (target - current_q) # Q-learning update equation
-    self.Q[(state, action)] = q_new
+    target = self.target(state_next)                            # compute target term
+    q_new = current_q + self.alpha * (target - current_q)       # Q-learning update equation
+    self.Q[(state, action)] = q_new                             # update Q table estimate
     return q_new
 
 
