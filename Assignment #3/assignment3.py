@@ -43,48 +43,15 @@ class td_qlearning:
 
     #TODO: Run Q-learning until convergence
     converged = False
-      #go thru each trial (state, action)
-      #for trial in trials:
+      # Iterate over each trial (state, action)
+      for trial in trials:
+        for s, a in trial.values:
       #extract current state and action and next state
       
       #compute immediet rewards for next state
       #make sure actions r valid
       #if yes valid then update q value else use reward of next state
       #td
-
-  #return the reward for a given state
-  def reward(self, state):
-    if state in self.rewards: #i.e. if we already calculated the reward for this state
-      return self.rewards[state]
-    try:
-      c_bag = int(state.split('/')[0])
-      c_agent = int(state.split('/')[1])
-      c_opponent = int(state.split('/')[2])
-      winner = state.split('/')[3]
-    except:
-      return 0
-    
-    if winner == 'A':   # agent wins
-      reward = c_agent  # return reward
-    elif winner == 'O': # opponent wins
-      reward = -c_agent # return negative reward
-    else:               # non terminal state
-      reward = 0        # no reward
-    
-    self.rewards[state] = reward
-    return reward
-  
-  # Return a list of integers representing the available actions in the given state
-  def available_actions(self, state):
-    try:
-      c_bag = int(state.split('/')[0]) # Remaining coins in the bag
-    except:
-      return []
-
-    if c_bag <= 0:
-      return []
-    # Available actions are 1, 2, or 3 coins --> cannot exceed remaining coins in the bag
-    return [i for i in [1, 2, 3] if i <= c_bag] 
 
   # Qvalue function
   def qvalue(self, state, action):
@@ -111,6 +78,80 @@ class td_qlearning:
     for a, q in scores:
       if q == best_q: # tie --> return any optimal action
         return a      # return the first action with the best q value
+
+  # HELPERS
+
+  # Return the reward for a given state
+  def reward(self, state):
+    if state in self.rewards: #i.e. if we already calculated the reward for this state
+      return self.rewards[state]
+    try:
+      c_bag = int(state.split('/')[0])
+      c_agent = int(state.split('/')[1])
+      c_opponent = int(state.split('/')[2])
+      winner = state.split('/')[3]
+    except:
+      return 0
+    
+    if winner == 'A':   # agent wins
+      reward = c_agent  # return reward
+    elif winner == 'O': # opponent wins
+      reward = -c_agent # return negative reward
+    else:               # non terminal state
+      reward = 0        # no reward
+    
+    self.rewards[state] = reward
+    return reward    
+  
+    # Return a list of integers representing the available actions in the given state
+  def available_actions(self, state):
+    try:
+      c_bag = int(state.split('/')[0]) # Remaining coins in the bag
+    except:
+      return []
+
+    if c_bag <= 0:
+      return []
+    # Available actions are 1, 2, or 3 coins --> cannot exceed remaining coins in the bag
+    return [i for i in [1, 2, 3] if i <= c_bag] 
+  
+  # Compute the target term for the next state for the Q-learning update equation
+  def target(self, s_next):
+    # s_next is the string representation of the next state
+
+    """
+      Compute the target term: r(s') + γ * max_{a'} Q(s', a')
+      If s' is terminal (no actions), the max term is 0.
+    """
+
+    r_next = self.reward(s_next) # reward for next state
+    actions_next = self.available_actions(s_next) # available actions in next state
+    if not actions_next:
+        return r_next  # terminal state --> no future term
+    
+    # compute max Q value for next state over all possible actions
+    max_next = max(self.Q.get((s_next, a_p), r_next) for a_p in actions_next) # default to reward if Q value not found for (s', a')
+    return r_next + self.gamma * max_next
+
+  # Update function for the Q-learning update
+  def update(self, state, action, state_next):
+    # state is the string representation of the current state
+    # action is the integer representation of the action taken
+    # state_next is the string representation of the next state
+
+    """
+    Q-learning update:
+      Q(s,a) ← Q(s,a) + α * (r(s') + γ max_{a'} Q(s',a') - Q(s,a))
+    Returns the new Q(s,a).
+    """
+
+    # Q-learning update rule
+    current_q = self.Q.get((state, action), self.reward(state)) # default to reward if Q value not found
+    target = self.target(state_next) 
+    q_new = current_q + self.alpha * (target - current_q) # Q-learning update equation
+    self.Q[(state, action)] = q_new
+    return q_new
+
 
 dir_path = "Examples/Example0/Trials"
 agent = td_qlearning(dir_path)
