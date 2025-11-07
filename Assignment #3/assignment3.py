@@ -65,9 +65,8 @@ class td_qlearning:
           state_next, action_next = trial_seq[i+1]
 
           # if terminal state --> can't update Q-value
-          if action == "-": 
+          if action == '-': 
               continue
-          action_next = int(action_next)          # convert action to integer
 
           old = self.Q.get((state, action), self.reward(state)) # current Q-value
           new = self.update(state, action, state_next)          # updated Q-value
