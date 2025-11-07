@@ -9,7 +9,8 @@ from collections import defaultdict
 import pandas as pd
 
 class td_qlearning:
-
+  eps = 1e-6
+  max_iterations = 1000
   alpha = 0.10
   gamma = 0.90
 
@@ -28,41 +29,53 @@ class td_qlearning:
         df = pd.read_csv(filepath, header=None)
 
       #gets all states and actions and initializes the q table with rewards
-      seq = [] # list of (state, action) tuples for this trial
+      trial_seq = [] # list of (state, action) tuples for this trial
       for s, a in df.values:
         state = str(s).strip()
         action = str(a)
         reward = self.reward(state)
-        seq.append((state, action)) # add (state, action) pair to sequence
+        trial_seq.append((state, action)) # add (state, action) pair to sequence
 
         # don't update Q-value for terminal states
         if action != "-":
           self.Q[(state, action)] = reward # initially estimate Q(s,a) = r(s) for all state-action pairs observed in the trials
-      self.trials.append(seq) # add trial sequence to trials
+      self.trials.append(trial_seq) # add trial sequence to trials
 
     print(self.Q)
     print(self.rewards)
 
-    #TODO: Run Q-learning until convergence
-    converged = False
+    # Run Q-learning until convergence
+    # Logic:
+    # Each adjacent pair of rows in the csv is a transition (s, a) -> s'
+    # For every state transition in all trials:
+      # Update Q(s,a) using the Q-learning update equation:
+        # Computes the target for the state-action pair
+        # Moves Q(s,a) towards target
+      # Also track the maximum change in Q-values during the iteration
+    # After processing all trials, check if the maximum change is below a small threshold (eps)
+      # If so, we consider the Q-values to have converged and stop iterating
+    # Repeat over all trials until values stop changing (converge).
+
     # Iterate over each sequence of trials
-    for seq in self.trials:
-      for i in range(len(seq) - 1):
-        state, action = seq[i] 
-        state_next, action_next = seq[i+1]
+    for i in range(self.max_iterations):
+      change = 0 # track maximum change in Q-values for convergence check
+      for trial_seq in self.trials: 
+        for i in range(len(trial_seq) - 1): # check each adjacent pair of (s, a) in the sequence
+          state, action = trial_seq[i] 
+          state_next, action_next = trial_seq[i+1]
 
-        # if terminal state --> can't update Q-value
-        if action == "-": 
-            continue
-        action_next = int(action_next)          # convert action to integer
-        self.update(state, action, state_next)  # update Q-value    
+          # if terminal state --> can't update Q-value
+          if action == "-": 
+              continue
+          action_next = int(action_next)          # convert action to integer
 
-      # Each adjacent pair of rows in the csv is a transition (s, a) -> s'
-      # For every state transition in all trials:
-        # Update Q(s,a) using the Q-learning update equation
-          # Computes the target for the state-action pair
-          # Move Q(s,a) towards target
-        # Repeat over all trials until values stop changing (converge).
+          old = self.Q.get((state, action), self.reward(state)) # current Q-value
+          new = self.update(state, action, state_next)          # updated Q-value
+          change = max(change, abs(new - old))                  # maximum change in Q-values
+
+      # Check for convergence: iterations barely change the numbers anymore --> Q-table has stabilized
+      if change < self.eps:
+        break
 
   # Qvalue function
   def qvalue(self, state, action):
