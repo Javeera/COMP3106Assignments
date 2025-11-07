@@ -91,18 +91,26 @@ class td_qlearning:
     # state is a string representation of a state
     # action is an integer representation of an action
 
-    # Return the q-value for the state-action pair
+    # Return the learned q-value for the state-action pair
     return round(self.Q[state][action], 2)
 
-  # implementing the policy function
-  # def policy(self, state):
-  #   # state is a string representation of a state
+  # Policy function - returns the optimal action for a given state
+  def policy(self, state):
+    # state is a string representation of a state
+    actions = self.available_actions(state)
+    if not actions:
+      return 1  # no available actions, return 1
 
-  #   # Return the optimal action (as an integer) under the learned policy
-  #   if not self.Q[state]:
-  #     return 1
-  #   else:
-  #     return max(self.Q[state], key=self.Q[state].get)
+    scores = [] # list of (action, Q value) tuples
+    base_reward = self.reward(state) 
+    for action in actions:
+      Q_value = self.Q.get((state, action), base_reward) # get Q value or use base reward if not found
+      scores.append((action, Q_value)) # store all actions with their Q values
+    best_q = max(q for a, q in scores) # find the best Q value
+
+    for a, q in scores:
+      if q == best_q: # tie --> return any optimal action
+        return a      # return the first action with the best q value
 
 dir_path = "Examples/Example0/Trials"
 agent = td_qlearning(dir_path)
