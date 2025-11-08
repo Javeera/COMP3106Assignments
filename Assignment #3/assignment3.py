@@ -60,13 +60,14 @@ class td_qlearning:
     for i in range(self.max_iterations):
       change = 0 # track maximum change in Q-values for convergence check
       for trial_seq in self.trials: 
-        for i in range(len(trial_seq) - 1): # check each adjacent pair of (s, a) in the sequence
-          state, action = trial_seq[i] 
-          state_next, action_next = trial_seq[i+1]
+        for k in range(len(trial_seq) - 1): # check each adjacent pair of (s, a) in the sequence
+          state, action = trial_seq[k] 
+          state_next, action_next = trial_seq[k+1]
 
           # if terminal state --> can't update Q-value
           if action == '-': 
               continue
+          action = int(action) # convert action to integer ###########s
 
           old = self.Q.get((state, action), self.reward(state)) # current Q-value
           new = self.update(state, action, state_next)          # updated Q-value
@@ -80,7 +81,7 @@ class td_qlearning:
   def qvalue(self, state, action):
     # state is a string representation of a state
     # action is an integer representation of an action
-    Q_value = self.Q.get((state, action))
+    Q_value = self.Q.get((state, action), self.reward(state))
     if Q_value is None:
         # Fallback Q-value Q(s,a)=r(s)
         Q_value = self.reward(state)
@@ -180,7 +181,5 @@ class td_qlearning:
     return q_new
 
 
-dir_path = "Examples/Example0/Trials"
+dir_path = "Examples/Example1/Trials"
 agent = td_qlearning(dir_path)
-agent.qvalue("3/2/1/-", 2)  # Example usage of qvalue method
-agent.policy("11/1/1/-")    # Example usage of policy method
