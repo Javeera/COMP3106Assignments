@@ -28,21 +28,20 @@ class td_qlearning:
         filepath = os.path.join(directory, file)
         df = pd.read_csv(filepath, header=None)
 
-      #gets all states and actions and initializes the q table with rewards
-      trial_seq = [] # list of (state, action) tuples for this trial
-      for s, a in df.values:
-        state = str(s).strip()
-        action = str(a)
-        reward = self.reward(state)
-        trial_seq.append((state, action)) # add (state, action) pair to sequence
+        #gets all states and actions and initializes the q table with rewards
+        trial_seq = [] # list of (state, action) tuples for this trial
+        for s, a in df.values:
+          state = str(s).strip()
+          action = str(a)
+          reward = self.reward(state)
+          trial_seq.append((state, action)) # add (state, action) pair to sequence
 
-        # don't update Q-value for terminal states
-        if action != "-":
-          self.Q[(state, action)] = reward # initially estimate Q(s,a) = r(s) for all state-action pairs observed in the trials
-      self.trials.append(trial_seq) # add trial sequence to trials
-
-    print(self.Q)
-    print(self.rewards)
+          # don't update Q-value for terminal states
+          if action != "-":
+            self.Q[(state, action)] = reward # initially estimate Q(s,a) = r(s) for all state-action pairs observed in the trials
+        self.trials.append(trial_seq) # add trial sequence to trials
+        print(self.Q)
+        print(self.rewards)
 
     # Run Q-learning until convergence
     # Logic:
