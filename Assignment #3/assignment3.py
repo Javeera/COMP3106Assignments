@@ -6,7 +6,6 @@
 import os
 import csv
 from collections import defaultdict
-import pandas as pd
 
 class td_qlearning:
   eps = 1e-6
@@ -23,26 +22,30 @@ class td_qlearning:
     self.trials = [] # [[(state, action), ...], [...], ...]
 
     #load all trials from the directory
+    #load all trials from the directory
     for file in os.listdir(directory):
       if file.endswith(".csv"):
         filepath = os.path.join(directory, file)
-        df = pd.read_csv(filepath, header=None)
-
-        #gets all states and actions and initializes the q table with rewards
+        # Read CSV using the built-in csv module (each row expected to be [state, action])
         trial_seq = [] # list of (state, action) tuples for this trial
-        for s, a in df.values:
-          state = str(s).strip()
-          action = str(a)
-          reward = self.reward(state)
-          trial_seq.append((state, action)) # add (state, action) pair to sequence
+        with open(filepath, newline='') as csvfile:
+          reader = csv.reader(csvfile)
+          for row in reader:
+            if len(row) < 2:
+              continue
+            s, a = row[0], row[1]
 
-          # don't update Q-value for terminal states
-          if action != "-":
-            self.Q[(state, action)] = reward # initially estimate Q(s,a) = r(s) for all state-action pairs observed in the trials
+            state = str(s).strip()
+            action = str(a)
+            reward = self.reward(state)
+            trial_seq.append((state, action)) # add (state, action) pair to sequence
+
+            # don't update Q-value for terminal states
+            if action != "-":
+              self.Q[(state, action)] = reward # initially estimate Q(s,a) = r(s) for all state-action pairs observed in the trials
         self.trials.append(trial_seq) # add trial sequence to trials
         print(self.Q)
         print(self.rewards)
-
     # Run Q-learning until convergence
     # Logic:
     # Each adjacent pair of rows in the csv is a transition (s, a) -> s'
@@ -178,7 +181,6 @@ class td_qlearning:
     q_new = current_q + self.alpha * (target - current_q)       # Q-learning update equation
     self.Q[(state, action)] = q_new                             # update Q table estimate
     return q_new
-
 
 dir_path = "Examples/Example1/Trials"
 agent = td_qlearning(dir_path)
