@@ -22,7 +22,6 @@ class td_qlearning:
     self.trials = [] # [[(state, action), ...], [...], ...]
 
     #load all trials from the directory
-    #load all trials from the directory
     for file in os.listdir(directory):
       if file.endswith(".csv"):
         filepath = os.path.join(directory, file)
@@ -178,18 +177,20 @@ class td_qlearning:
     
     # Q-learning update rule
     current_q = self.Q.get((state, action), self.reward(state)) # default to reward if Q value not found
-    r_s = self.reward(state)
-    actions_next = self.available_actions(state_next)
     
+    r_s = self.reward(state_next)
+    actions_next = self.available_actions(state_next)
+      
     # if next state is terminal (ends with /A or /O), assign its reward to current state
     if state_next.endswith('/A') or state_next.endswith('/O'):
-      target = self.reward(state_next)
+      max_next = 0
+      
     elif actions_next:
-      max_next = max(self.Q.get((state_next, a_p), self.reward(state_next)) for a_p in actions_next)
-      target = r_s + self.gamma * max_next
+        max_next = max(self.Q.get((state_next, a_p), self.reward(state_next)) for a_p in actions_next)    
     else:
-      target = r_s
-
+        max_next = 0
+    
+    target = r_s + self.gamma * max_next
     q_new = current_q + self.alpha * (target - current_q)
     self.Q[(state, action)] = q_new                             # update Q table estimate
     return q_new
