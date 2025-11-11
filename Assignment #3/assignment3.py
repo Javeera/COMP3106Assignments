@@ -36,12 +36,12 @@ class td_qlearning:
             s, a = row[0], row[1]
 
             state = str(s).strip()
-            action = str(a)
+            action = None if a.strip() == '-' else int(a)
             reward = self.reward(state)
             trial_seq.append((state, action)) # add (state, action) pair to sequence
 
             # don't update Q-value for terminal states
-            if action != "-":
+            if action is not None:
               self.Q[(state, action)] = reward # initially estimate Q(s,a) = r(s) for all state-action pairs observed in the trials
         self.trials.append(trial_seq) # add trial sequence to trials
         print(self.Q)
@@ -67,9 +67,9 @@ class td_qlearning:
           state_next, action_next = trial_seq[k+1]
 
           # if terminal state --> can't update Q-value
-          if action == '-': 
+          if action is None: 
               continue
-          action = int(action) # convert action to integer ###########s
+          #action = int(action) # convert action to integer ###########s
 
           old = self.Q.get((state, action), self.reward(state)) # current Q-value
           new = self.update(state, action, state_next)          # updated Q-value
@@ -96,7 +96,7 @@ class td_qlearning:
     # state is a string representation of a state
     actions = self.available_actions(state)
     if not actions:
-      return 1  # no available actions, return 1
+      return 0  # no available actions, return 0
 
     scores = [] # list of (action, Q value) tuples
     base_reward = self.reward(state) 
@@ -105,9 +105,11 @@ class td_qlearning:
       scores.append((action, Q_value)) # store all actions with their Q values
     best_q = max(q for a, q in scores) # find the best Q value
 
-    for a, q in scores:
-      if q == best_q: # tie --> return any optimal action
-        return a      # return the first action with the best q value
+    # for a, q in scores:
+    #   if q == best_q: # tie --> return any optimal action
+    #     return a      # return the first action with the best q value
+    best_actions = [a for a, q in scores if q == best_q]
+    return max(best_actions)
 
   # HELPERS
 
