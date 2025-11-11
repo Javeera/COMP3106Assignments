@@ -44,8 +44,8 @@ class td_qlearning:
             if action is not None:
               self.Q[(state, action)] = reward # initially estimate Q(s,a) = r(s) for all state-action pairs observed in the trials
         self.trials.append(trial_seq) # add trial sequence to trials
-        print(self.Q)
-        print(self.rewards)
+        #print(self.Q)
+        #print(self.rewards)
     # Run Q-learning until convergence
     # Logic:
     # Each adjacent pair of rows in the csv is a transition (s, a) -> s'
@@ -69,7 +69,9 @@ class td_qlearning:
           # if terminal state --> can't update Q-value
           if action is None: 
               continue
-          #action = int(action) # convert action to integer ###########s
+          action = int(action) # convert action to integer ###########s
+          
+          print(f"Updating state={state}, action={action}, next={state_next}")  # Debugging print statement
 
           old = self.Q.get((state, action), self.reward(state)) # current Q-value
           new = self.update(state, action, state_next)          # updated Q-value
@@ -170,19 +172,28 @@ class td_qlearning:
     # state is the string representation of the current state
     # action is the integer representation of the action taken
     # state_next is the string representation of the next state
-
-    """
-    Q-learning update:
-      Q(s,a) ← Q(s,a) + α * (r(s') + γ max_{a'} Q(s',a') - Q(s,a))
-    Returns the new Q(s,a).
-    """
-
+    # Q-learning update:
+    #   Q(s,a) ← Q(s,a) + α * (r(s') + γ max_{a'} Q(s',a') - Q(s,a))
+    # Returns the new Q(s,a).
+    
     # Q-learning update rule
     current_q = self.Q.get((state, action), self.reward(state)) # default to reward if Q value not found
-    target = self.target(state_next)                            # compute target term
-    q_new = current_q + self.alpha * (target - current_q)       # Q-learning update equation
+    r_s = self.reward(state)
+    actions_next = self.available_actions(state_next)
+    
+    # if next state is terminal (ends with /A or /O), assign its reward to current state
+    if state_next.endswith('/A') or state_next.endswith('/O'):
+      target = self.reward(state_next)
+    elif actions_next:
+      max_next = max(self.Q.get((state_next, a_p), self.reward(state_next)) for a_p in actions_next)
+      target = r_s + self.gamma * max_next
+    else:
+      target = r_s
+
+    q_new = current_q + self.alpha * (target - current_q)
     self.Q[(state, action)] = q_new                             # update Q table estimate
     return q_new
 
 dir_path = "Examples/Example1/Trials"
 agent = td_qlearning(dir_path)
+print(agent.qvalue("8/3/2/-", 2))
