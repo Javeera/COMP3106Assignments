@@ -91,6 +91,7 @@ class td_qlearning:
 
     # Return the learned q-value for the state-action pair
     return round(Q_value, 2)
+    #return Q_value
 
   # Policy function - returns the optimal action for a given state
   def policy(self, state):
@@ -151,19 +152,19 @@ class td_qlearning:
   # Compute the target term for the next state for the Q-learning update equation
   def target(self, s_next):
     # s_next is the string representation of the next state
-
     """
       Compute the target term: r(s') + γ * max_{a'} Q(s', a')
       If s' is terminal (no actions), the max term is 0.
     """
-
     r_next = self.reward(s_next) # reward for next state
     actions_next = self.available_actions(s_next) # available actions in next state
     if not actions_next:
-        return r_next  # terminal state --> no future term
+      return r_next  # terminal state --> no future term
     
     # compute max Q value for next state over all possible actions
     max_next = max(self.Q.get((s_next, a_p), r_next) for a_p in actions_next) # default to reward if Q value not found for (s', a')
+    if r_next != 0:
+      print(r_next," + ", self.gamma,"*",max_next) #debugging print
     return r_next + self.gamma * max_next
 
   # Update function for the Q-learning update
@@ -179,19 +180,16 @@ class td_qlearning:
     current_q = self.Q.get((state, action), self.reward(state)) # default to reward if Q value not found
     
     r_s = self.reward(state_next)
-    actions_next = self.available_actions(state_next)
       
     # if next state is terminal (ends with /A or /O), assign its reward to current state
-    if state_next.endswith('/A') or state_next.endswith('/O'):
-      max_next = 0
-      
-    elif actions_next:
-        max_next = max(self.Q.get((state_next, a_p), self.reward(state_next)) for a_p in actions_next)    
+    #if state_next.endswith('/A') or state_next.endswith('/O'):
+    if r_s != 0:
+      target_next = r_s
     else:
-        max_next = 0
-    
-    target = r_s + self.gamma * max_next
-    q_new = current_q + self.alpha * (target - current_q)
+      #actions_next = self.available_actions(state_next)
+      target_next = self.target(state_next) #r_s + self.gamma * max_next #computing next target state
+
+    q_new = current_q + self.alpha * (target_next - current_q)
     self.Q[(state, action)] = q_new                             # update Q table estimate
     return q_new
 
