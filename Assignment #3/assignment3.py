@@ -63,7 +63,7 @@ class td_qlearning:
       for trial_seq in self.trials: 
         for k in range(len(trial_seq) - 1): # check each adjacent pair of (s, a) in the sequence
           state, action = trial_seq[k] 
-          state_next, action_next = trial_seq[k+1]
+          state_next, action_next = trial_seq[k-1]
 
           # if terminal state --> can't update Q-value
           if action is None: 
@@ -117,8 +117,9 @@ class td_qlearning:
 
   # Return the reward for a given state
   def reward(self, state):
-    if state in self.rewards: #i.e. if we already calculated the reward for this state
-      return self.rewards[state]
+    # if state in self.rewards: #i.e. if we already calculated the reward for this state
+    #   print("NO WINNER YET") #debugging print
+    #   return self.rewards[state]
     try:
       c_bag = int(state.split('/')[0])
       c_agent = int(state.split('/')[1])
@@ -126,15 +127,18 @@ class td_qlearning:
       winner = state.split('/')[3]
     except:
       return 0
-    
+    #print("current state", state)
     if winner == 'A':   # agent wins
+      print("AGENT WINS!!!", c_agent) #debugging print
       reward = c_agent  # return reward
     elif winner == 'O': # opponent wins
+      print("OPPONENT WINS!!!", -c_agent) #debugging print
       reward = -c_agent # return negative reward
     else:               # non terminal state
       reward = 0        # no reward
     
     self.rewards[state] = reward
+    #print("REWARD for state", state, "is", reward) #debugging print
     return reward    
   
     # Return a list of integers representing the available actions in the given state
@@ -178,21 +182,30 @@ class td_qlearning:
     
     # Q-learning update rule
     current_q = self.Q.get((state, action), self.reward(state)) # default to reward if Q value not found
-    
-    r_s = self.reward(state_next)
+    # r_s = self.reward(state_next)
       
-    # if next state is terminal (ends with /A or /O), assign its reward to current state
-    #if state_next.endswith('/A') or state_next.endswith('/O'):
-    if r_s != 0:
-      target_next = r_s
-    else:
-      #actions_next = self.available_actions(state_next)
-      target_next = self.target(state_next) #r_s + self.gamma * max_next #computing next target state
+    # # if next state is terminal (ends with /A or /O), assign its reward to current state
+    # #if state_next.endswith('/A') or state_next.endswith('/O'):
+    # if r_s != 0:
+    #   print("TERMINAL STATE!!!! R_S:", r_s)
+    #   #max(self.Q.get((s_next, a_p), r_next) for a_p in actions_next)
+    #   target_next = r_s
+    # else:
+    #   #actions_next = self.available_actions(state_next)
+    target_next = self.target(state_next) #r_s + self.gamma * max_next #computing next target state
+    if target_next == 7:
+      print("TARGET NEXT:", target_next)
 
     q_new = current_q + self.alpha * (target_next - current_q)
     self.Q[(state, action)] = q_new                             # update Q table estimate
+    #print("Q_NEW:", q_new)
     return q_new
 
-dir_path = "Examples/Example1/Trials"
+dir_path = "Examples/Example0/Trials"
 agent = td_qlearning(dir_path)
 print(agent.qvalue("8/3/2/-", 2))
+#print(agent.qvalue("3/5/5/-", 2))
+
+
+
+#prev state and current state instead of next state.
