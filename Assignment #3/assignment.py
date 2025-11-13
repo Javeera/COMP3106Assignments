@@ -1,159 +1,203 @@
+# Fatema Lokhandwala (101259465)
+# Gurleen Bassali (101260100)
+# Javeera Faizi (101191910)
+
+# import statements
 import os
 import csv
 from collections import defaultdict
 
 class td_qlearning:
-    eps = 1e-6
-    max_iterations = 5000
-    alpha = 0.10
-    gamma = 0.90
+  eps = 1e-6
+  max_iterations = 1000
+  alpha = 0.10
+  gamma = 0.90
 
-    def __init__(self, directory):
-        """
-        directory: path to folder containing trial CSV files
-        Each CSV file: rows of "state,action"
-        """
-        self.Q = defaultdict(float)
-        self.rewards = {}
-        self.trials = []
+  def __init__(self, directory):
+    # directory is the path to a directory containing trials through state space
+    # Constructor --> Returns nothing
+    self.Q = {} #q table (state, action): value
+    self.rewards = {} #state rewards
+    # list of trials, each trial is a list of (state, action) tuples
+    self.trials = [] # [[(state, action), ...], [...], ...]
 
-        # --- Load all trial files ---
-        for file in os.listdir(directory):
-            if file.endswith(".csv"):
-                filepath = os.path.join(directory, file)
-                trial_seq = []
-                with open(filepath, newline='') as csvfile:
-                    reader = csv.reader(csvfile, skipinitialspace=True)
-                    for row in reader:
-                        if not row or row[0].strip() == "":
-                            continue
-                        state = row[0].strip()
-                        action_str = row[1].strip() if len(row) > 1 else ""
-                        # include terminal states (action '-', '', or None)
-                        if action_str in ["", "-", "None"]:
-                            trial_seq.append((state, None))
-                        else:
-                            try:
-                                trial_seq.append((state, int(action_str)))
-                            except ValueError:
-                                continue
-                if trial_seq:
-                    self.trials.append(trial_seq)
+    #load all trials from the directory
+    #load all trials from the directory
+    for file in os.listdir(directory):
+      if file.endswith(".csv"):
+        filepath = os.path.join(directory, file)
+        # Read CSV using the built-in csv module (each row expected to be [state, action])
+        trial_seq = [] # list of (state, action) tuples for this trial
+        with open(filepath, newline='') as csvfile:
+          reader = csv.reader(csvfile)
+          for row in reader:
+            if len(row) < 2:
+              continue
+            s, a = row[0], row[1]
 
-        # --- Compute rewards for all states ---
-        for trial in self.trials:
-            for (state, _) in trial:
-                self.rewards[state] = self._reward(state)
+            state = str(s).strip()
+            action = None if a.strip() == '-' else int(a)
+            reward = self.reward(state)
+            trial_seq.append((state, action)) # add (state, action) pair to sequence
 
-        # --- Initialize Q(s,a) = r(s) ---
-        for trial in self.trials:
-            for (state, action) in trial:
-                self.Q[(state, action)] = self.rewards[state]
+            # don't update Q-value for terminal states
+            if action is not None:
+              self.Q[(state, action)] = reward # initially estimate Q(s,a) = r(s) for all state-action pairs observed in the trials
+        self.trials.append(trial_seq) # add trial sequence to trials
+        #print(self.Q)
+        #print(self.rewards)
+    # Run Q-learning until convergence
+    # Logic:
+    # Each adjacent pair of rows in the csv is a transition (s, a) -> s'
+    # For every state transition in all trials:
+      # Update Q(s,a) using the Q-learning update equation:
+        # Computes the target for the state-action pair
+        # Moves Q(s,a) towards target
+      # Also track the maximum change in Q-values during the iteration
+    # After processing all trials, check if the maximum change is below a small threshold (eps)
+      # If so, we consider the Q-values to have converged and stop iterating
+    # Repeat over all trials until values stop changing (converge).
 
-        # Debug prints
-        print("Loaded trials:", len(self.trials))
-        if self.trials:
-            print("First trial sample:", self.trials[0])
+    # Iterate over each sequence of trials
+    for i in range(self.max_iterations):
+      change = 0 # track maximum change in Q-values for convergence check
+      for trial_seq in self.trials: 
+        for k in range(len(trial_seq) - 1): # check each adjacent pair of (s, a) in the sequence
+          state, action = trial_seq[k] 
+          state_next, action_next = trial_seq[k+1]
 
-        # --- Train until convergence ---
-        self._train()
+          # if terminal state --> can't update Q-value
+          if action is None: 
+              continue
+          action = int(action) # convert action to integer ###########s
+          
+          print(f"Updating state={state}, action={action}, next={state_next}")  # Debugging print statement
 
-    # ------------------------------------------------------------------
-    def _reward(self, state):
-        """Compute reward from state string: cbag/cagent/copponent/winner"""
-        parts = state.split('/')
-        if len(parts) != 4:
-            return 0.0
-        bag, agent, opponent, winner = parts
-        try:
-            agent = int(agent)
-        except ValueError:
-            return 0.0
+          old = self.Q.get((state, action), self.reward(state)) # current Q-value
+          new = self.update(state, action, state_next) # updated Q-value
+          change = max(change, abs(new - old))                  # maximum change in Q-values
 
-        if winner == 'A':
-            return float(agent)
-        elif winner == 'O':
-            return -float(agent)
-        else:
-            return 0.0
+      # Check for convergence: iterations barely change the numbers anymore --> Q-table has stabilized
+      if change < self.eps:
+        break
 
-    # ------------------------------------------------------------------
-    def _valid_action(self, state, action):
-        """Check if action is valid given remaining coins."""
-        try:
-            bag = int(state.split('/')[0])
-        except Exception:
-            return False
-        return 1 <= action <= 3 and bag >= action
+  # Qvalue function
+  def qvalue(self, state, action):
+    # state is a string representation of a state
+    # action is an integer representation of an action
+    Q_value = self.Q.get((state, action), self.reward(state))
+    if Q_value is None:
+        # Fallback Q-value Q(s,a)=r(s)
+        Q_value = self.reward(state)
 
-    # ------------------------------------------------------------------
-    def _max_q(self, state):
-        """Return the maximum Q-value among valid actions for a state."""
-        if state is None:
-            return 0.0
-        actions = [1, 2, 3]
-        valid_actions = [a for a in actions if self._valid_action(state, a)]
-        if not valid_actions:
-            return 0.0
-        return max(self.Q[(state, a)] for a in valid_actions)
+    # Return the learned q-value for the state-action pair
+    return round(Q_value, 2)
 
-    # ------------------------------------------------------------------
-    def _train(self):
-        """Perform temporal difference Q-learning updates."""
-        for _ in range(self.max_iterations):
-            delta = 0
-            for trial in self.trials:
-                for i in range(len(trial)):
-                    s, a = trial[i]
-                    if a is None:
-                        continue  # skip terminal
+  # Policy function - returns the optimal action for a given state
+  def policy(self, state):
+    # state is a string representation of a state
+    actions = self.available_actions(state)
+    if not actions:
+      return 0  # no available actions, return 0
 
-                    # determine next state
-                    if i < len(trial) - 1:
-                        s_next, _ = trial[i + 1]
-                    else:
-                        s_next = None
+    scores = [] # list of (action, Q value) tuples
+    base_reward = self.reward(state) 
+    for action in actions:
+      Q_value = self.Q.get((state, action), base_reward) # get Q value or use base reward if not found
+      scores.append((action, Q_value)) # store all actions with their Q values
+    best_q = max(q for a, q in scores) # find the best Q value
 
-                    # --- reward logic ---
-                    # reward is zero for non-terminal next states
-                    # reward is ±agent coins for terminal next states
-                    if s_next is not None and ('/A' in s_next or '/O' in s_next):
-                        r = self.rewards[s_next]   # terminal reward
-                        max_q_next = 0.0           # no future value
-                    else:
-                        r = 0.0
-                        max_q_next = self._max_q(s_next) if s_next else 0.0
+    # for a, q in scores:
+    #   if q == best_q: # tie --> return any optimal action
+    #     return a      # return the first action with the best q value
+    best_actions = [a for a, q in scores if q == best_q]
+    return max(best_actions)
 
-                    # --- standard TD(0) update ---
-                    old_q = self.Q[(s, a)]
-                    new_q = old_q + self.alpha * (r + self.gamma * max_q_next - old_q)
-                    self.Q[(s, a)] = new_q
-                    delta = max(delta, abs(new_q - old_q))
-            if delta < self.eps:
-                break
+  # HELPERS
+
+  # Return the reward for a given state
+  def reward(self, state):
+    if state in self.rewards: #i.e. if we already calculated the reward for this state
+      return self.rewards[state]
+    try:
+      c_bag = int(state.split('/')[0])
+      c_agent = int(state.split('/')[1])
+      c_opponent = int(state.split('/')[2])
+      winner = state.split('/')[3]
+    except:
+      return 0
+    
+    if winner == 'A':   # agent wins
+      reward = c_agent  # return reward
+    elif winner == 'O': # opponent wins
+      reward = -c_agent # return negative reward
+    else:               # non terminal state
+      reward = 0        # no reward
+    
+    self.rewards[state] = reward
+    return reward    
+  
+    # Return a list of integers representing the available actions in the given state
+  def available_actions(self, state):
+    try:
+      c_bag = int(state.split('/')[0]) # Remaining coins in the bag
+    except:
+      return []
+
+    if c_bag <= 0:
+      return []
+    # Available actions are 1, 2, or 3 coins --> cannot exceed remaining coins in the bag
+    return [i for i in [1, 2, 3] if i <= c_bag] 
+  
+  # Compute the target term for the next state for the Q-learning update equation
+  def target(self, s_next):
+    # s_next is the string representation of the next state
+
+    """
+      Compute the target term: r(s') + γ * max_{a'} Q(s', a')
+      If s' is terminal (no actions), the max term is 0.
+    """
+
+    r_next = self.reward(s_next) # reward for next state
+    actions_next = self.available_actions(s_next) # available actions in next state
+    if not actions_next:
+        return r_next  # terminal state --> no future term
+    
+    # compute max Q value for next state over all possible actions
+    max_next = max(self.Q.get((s_next, a_p), r_next) for a_p in actions_next) # default to reward if Q value not found for (s', a')
+    return r_next + self.gamma * max_next
+
+  # Update function for the Q-learning update
+    # Update function using prev_state and state (as in lecture slides)
+  def update(self, prev_state, prev_action, state):
+    """
+    Performs one Q-learning update using the previous (state, action) pair and the new state.
+
+    Q(prev_state, prev_action) ← Q(prev_state, prev_action)
+        + α * [ r(state) + γ * max_a' Q(state, a') - Q(prev_state, prev_action) ]
+    """
+
+    # Get current Q-value for (prev_state, prev_action)
+    current_q = self.Q.get((prev_state, prev_action), self.reward(prev_state))
+
+    # Compute r(state) + γ * max_a' Q(state, a')
+    reward_term = self.reward(state)
+    possible_actions = self.available_actions(state)
+    if possible_actions:
+        max_next_q = max(self.Q.get((state, a), self.reward(state)) for a in possible_actions)
+    else:
+        max_next_q = 0  # terminal state
+
+    # Compute TD error
+    td_error = reward_term + self.gamma * max_next_q - current_q
+
+    # Update Q(prev_state, prev_action)
+    new_q = current_q + self.alpha * td_error
+    self.Q[(prev_state, prev_action)] = new_q
+
+    return new_q
 
 
-
-    # ------------------------------------------------------------------
-    def qvalue(self, state, action):
-        """Return learned Q-value for (state, action)."""
-        return round(self.Q.get((state, action), 0.0), 2)
-
-    # ------------------------------------------------------------------
-    def policy(self, state):
-        """Return the optimal action for a given state."""
-        actions = [1, 2, 3]
-        valid_actions = [a for a in actions if self._valid_action(state, a)]
-        if not valid_actions:
-            return None
-        best_action = max(valid_actions, key=lambda a: self.Q.get((state, a), float('-inf')))
-        return best_action
-
-
-# ------------------------------------------------------------------
-# Quick test (safe for submission)
-if __name__ == "__main__":
-    dir_path = "Examples/Example0/Trials"
-    agent = td_qlearning(dir_path)
-    print(agent.qvalue("8/3/2/-", 2))   # Expected ≈ 5.67
-    print(agent.policy("11/1/1/-"))     # Expected 2
+dir_path = "Examples/Example1/Trials"
+agent = td_qlearning(dir_path)
+print(agent.qvalue("8/3/2/-", 2))
