@@ -252,7 +252,7 @@ print()
 
 
 #ex 2
-dir_path = "Examples/Example12/Trials"
+dir_path = "Examples/Example2/Trials"
 agent = td_qlearning(dir_path)
 
 print("State: 8/3/2/-")
