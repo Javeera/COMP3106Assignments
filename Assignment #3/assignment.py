@@ -71,7 +71,7 @@ class td_qlearning:
               continue
           action = int(action) # convert action to integer ###########s
           
-          print(f"Updating state={state}, action={action}, next={state_next}")  # Debugging print statement
+          #print(f"Updating state={state}, action={action}, next={state_next}")  # Debugging print statement
 
           old = self.Q.get((state, action), self.reward(state)) # current Q-value
           new = self.update(state, action, state_next) # updated Q-value
@@ -197,7 +197,82 @@ class td_qlearning:
 
     return new_q
 
+#ex 0
+# dir_path = "Examples/Example0/Trials"
+# agent = td_qlearning(dir_path)
+# print(agent.qvalue("8/3/2/-", 2)) #5.67
 
+#ex 1
 dir_path = "Examples/Example1/Trials"
 agent = td_qlearning(dir_path)
-print(agent.qvalue("8/3/2/-", 2))
+print(agent.qvalue("6/1/6/-", 2)) #0
+print(agent.qvalue("0/7/6/O", 0)) #-7
+print(agent.qvalue("1/8/4/-", 1)) #-8.09999999999999
+print(agent.qvalue("1/6/6/-", 1)) #0
+print(agent.qvalue("4/5/4/-", 3)) #7.199999999999996
+print(agent.qvalue("2/8/3/-", 2)) #-8.999999999999993
+print(agent.qvalue("9/2/2/-", 3)) #5.831999999999988
+print(agent.qvalue("3/6/4/-", 2)) #7.199999999999996
+print(agent.qvalue("1/5/7/-", 1)) #0
+print(agent.qvalue("1/9/3/-", 1)) #-8.999999999999993
+
+#ex 2
+dir_path = "Examples/Example1/Trials"
+agent = td_qlearning(dir_path)
+print(agent.qvalue("8/3/2/-", 3)) #7.2899999999999885
+print(agent.qvalue("1/8/4/-", 1)) #-8.09999999999999
+print(agent.qvalue("2/8/3/-", 2)) #0
+print(agent.qvalue("13/0/0/-", 1)) #-2.6243999999999925
+print(agent.qvalue("4/4/5/-", 1)) #0
+print(agent.qvalue("8/2/3/-", 3)) #0
+print(agent.qvalue("11/0/2/-", 2)) #0
+print(agent.qvalue("0/3/10/O", 0)) #-3
+print(agent.qvalue("10/0/3/-", 3)) #0
+print(agent.qvalue("5/5/3/-", 1)) #-5.669999999999993
+
+#ex 3
+dir_path = "Examples/Example1/Trials"
+agent = td_qlearning(dir_path)
+print(agent.qvalue("1/7/5/-", 1)) #-7.199999999999996
+print(agent.qvalue("9/1/3/-", 3)) #-4.373999999999992
+print(agent.qvalue("4/4/5/-", 2)) #0
+print(agent.qvalue("4/3/6/-", 1)) #0
+print(agent.qvalue("6/3/4/-", 3)) #0
+print(agent.qvalue("2/4/7/-", 1)) #0
+print(agent.qvalue("1/7/5/-", 1)) #-7.199999999999996
+print(agent.qvalue("4/6/3/-", 2)) #-7.2899999999999885
+print(agent.qvalue("13/0/0/-", 2)) #-3.280499999999991
+print(agent.qvalue("2/4/7/-", 2)) #0
+
+0
+-7
+-9.0
+0
+8.0
+-10.0
+6.48
+8.0
+0
+-10.0
+
+8.1
+-9.0
+-10.0
+6.56
+0
+0
+0
+-3
+0
+7.2
+
+-8.0
+0
+0
+0
+0
+0
+-8.0
+-8.1
+6.56
+0

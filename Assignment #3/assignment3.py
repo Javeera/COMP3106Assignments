@@ -70,7 +70,7 @@ class td_qlearning:
               continue
           action = int(action) # convert action to integer ###########s
           
-          print(f"Updating state={state}, action={action}, next={state_next}")  # Debugging print statement
+          #print(f"Updating state={state}, action={action}, next={state_next}")  # Debugging print statement
 
           old = self.Q.get((state, action), self.reward(state)) # current Q-value
           new = self.update(state, action, state_next)          # updated Q-value
@@ -129,10 +129,10 @@ class td_qlearning:
       return 0
     #print("current state", state)
     if winner == 'A':   # agent wins
-      print("AGENT WINS!!!", c_agent) #debugging print
+      #print("AGENT WINS!!!", c_agent) #debugging print
       reward = c_agent  # return reward
     elif winner == 'O': # opponent wins
-      print("OPPONENT WINS!!!", -c_agent) #debugging print
+      #print("OPPONENT WINS!!!", -c_agent) #debugging print
       reward = -c_agent # return negative reward
     else:               # non terminal state
       reward = 0        # no reward
@@ -168,7 +168,8 @@ class td_qlearning:
     # compute max Q value for next state over all possible actions
     max_next = max(self.Q.get((s_next, a_p), r_next) for a_p in actions_next) # default to reward if Q value not found for (s', a')
     if r_next != 0:
-      print(r_next," + ", self.gamma,"*",max_next) #debugging print
+      #print(r_next," + ", self.gamma,"*",max_next) #debugging print
+      print("")
     return r_next + self.gamma * max_next
 
   # Update function for the Q-learning update
@@ -194,18 +195,96 @@ class td_qlearning:
     #   #actions_next = self.available_actions(state_next)
     target_next = self.target(state_next) #r_s + self.gamma * max_next #computing next target state
     if target_next == 7:
-      print("TARGET NEXT:", target_next)
+      #print("TARGET NEXT:", target_next)
+      print("")
 
     q_new = current_q + self.alpha * (target_next - current_q)
     self.Q[(state, action)] = q_new                             # update Q table estimate
     #print("Q_NEW:", q_new)
     return q_new
 
+#ex 0
 dir_path = "Examples/Example0/Trials"
 agent = td_qlearning(dir_path)
-print(agent.qvalue("8/3/2/-", 2))
-#print(agent.qvalue("3/5/5/-", 2))
+print(agent.qvalue("8/3/2/-", 2)) #5.67
 
+#ex 1
+dir_path = "Examples/Example1/Trials"
+agent = td_qlearning(dir_path)
+print(agent.qvalue("6/1/6/-", 2)) #0
+print(agent.qvalue("0/7/6/O", 0)) #-7
+print(agent.qvalue("1/8/4/-", 1)) #-8.09999999999999
+print(agent.qvalue("1/6/6/-", 1)) #0
+print(agent.qvalue("4/5/4/-", 3)) #7.199999999999996
+print(agent.qvalue("2/8/3/-", 2)) #-8.999999999999993
+print(agent.qvalue("9/2/2/-", 3)) #5.831999999999988
+print(agent.qvalue("3/6/4/-", 2)) #7.199999999999996
+print(agent.qvalue("1/5/7/-", 1)) #0
+print(agent.qvalue("1/9/3/-", 1)) #-8.999999999999993
+
+
+#ex 2
+dir_path = "Examples/Example1/Trials"
+agent = td_qlearning(dir_path)
+print(agent.qvalue("8/3/2/-", 3)) #7.2899999999999885
+print(agent.qvalue("1/8/4/-", 1)) #-8.09999999999999
+print(agent.qvalue("2/8/3/-", 2)) #0
+print(agent.qvalue("13/0/0/-", 1)) #-2.6243999999999925
+print(agent.qvalue("4/4/5/-", 1)) #0
+print(agent.qvalue("8/2/3/-", 3)) #0
+print(agent.qvalue("11/0/2/-", 2)) #0
+print(agent.qvalue("0/3/10/O", 0)) #-3
+print(agent.qvalue("10/0/3/-", 3)) #0
+print(agent.qvalue("5/5/3/-", 1)) #-5.669999999999993
+
+#ex 3
+dir_path = "Examples/Example1/Trials"
+agent = td_qlearning(dir_path)
+print(agent.qvalue("1/7/5/-", 1)) #-7.199999999999996
+print(agent.qvalue("9/1/3/-", 3)) #-4.373999999999992
+print(agent.qvalue("4/4/5/-", 2)) #0
+print(agent.qvalue("4/3/6/-", 1)) #0
+print(agent.qvalue("6/3/4/-", 3)) #0
+print(agent.qvalue("2/4/7/-", 1)) #0
+print(agent.qvalue("1/7/5/-", 1)) #-7.199999999999996
+print(agent.qvalue("4/6/3/-", 2)) #-7.2899999999999885
+print(agent.qvalue("13/0/0/-", 2)) #-3.280499999999991
+print(agent.qvalue("2/4/7/-", 2)) #0
 
 
 #prev state and current state instead of next state.
+
+5.67
+
+0
+-7
+-0.03
+0
+-0.07
+0.08
+-0.07
+-0.04
+0
+0.23
+
+-0.25
+-0.03
+0.08
+-1.85
+0
+0
+0
+-3
+0
+-0.02
+
+-0.02
+0
+0
+0
+0
+0
+-0.02
+-0.08
+0.3
+0
