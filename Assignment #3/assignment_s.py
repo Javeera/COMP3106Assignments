@@ -73,7 +73,7 @@ class td_qlearning:
           #print(f"Updating state={state}, action={action}, next={state_next}")  # Debugging print statement
 
           old = self.Q.get((state, action), self.reward(state)) # current Q-value
-          new = self.update(state, action, state_next)          # updated Q-value
+          new = self.temporal_difference_qlearning(state, action, state_next)          # updated Q-value
           change = max(change, abs(new - old))                  # maximum change in Q-values
 
       # Check for convergence: iterations barely change the numbers anymore --> Q-table has stabilized
@@ -173,36 +173,17 @@ class td_qlearning:
     return r_next + self.gamma * max_next
 
   # Update function for the Q-learning update
-  def update(self, state, action, state_next):
-    # state is the string representation of the current state
-    # action is the integer representation of the action taken
-    # state_next is the string representation of the next state
-    # Q-learning update:
-    #   Q(s,a) ← Q(s,a) + α * (r(s') + γ max_{a'} Q(s',a') - Q(s,a))
-    # Returns the new Q(s,a).
-    
-    # Q-learning update rule
-    current_q = self.Q.get((state, action), self.reward(state)) # default to reward if Q value not found
-    # r_s = self.reward(state_next)
-      
-    # # if next state is terminal (ends with /A or /O), assign its reward to current state
-    # #if state_next.endswith('/A') or state_next.endswith('/O'):
-    # if r_s != 0:
-    #   print("TERMINAL STATE!!!! R_S:", r_s)
-    #   #max(self.Q.get((s_next, a_p), r_next) for a_p in actions_next)
-    #   target_next = r_s
-    # else:
-    #   #actions_next = self.available_actions(state_next)
-    # target_next = self.target(state_next) #r_s + self.gamma * max_next #computing next target state
-    target_next = r_s + self.gamma * max_next #computing next target state
-    # if target_next == 7:
-    #   #print("TARGET NEXT:", target_next)
-    #   print("")
+  def temporal_difference_qlearning(prev_state, prev_action, state, qvalues):
+    action_qvalues = dict()
+    for action in actions:
+        action_qvalues[action] = qvalues[state, action]
 
-    q_new = current_q + self.alpha * (target_next - current_q)
-    self.Q[(state, action)] = q_new                             # update Q table estimate
-    #print("Q_NEW:", q_new)
-    return q_new
+    error_term = reward(prev_state) + gamma * max(action_qvalues.values()) - qvalues[prev_state, prev_action]
+    qvalues[prev_state, prev_action] = qvalues[prev_state, prev_action] + alpha * error_term
+    optimal_action = argmax(action_qvalues)
+
+    return optimal_action
+
 
 #ex 0
 dir_path = "Examples/Example0/Trials"
